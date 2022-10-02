@@ -1,0 +1,8 @@
+
+{% for s in subcategorias %}
+	{% if producto.subCategoria_id == s.id%}
+		<option value="{{s.pk}}" selected>{{s}}</option>
+	{% else %}
+		<option value="{{s.pk}}">{{s}}</option>
+	{% endif %}
+{% endfor %}

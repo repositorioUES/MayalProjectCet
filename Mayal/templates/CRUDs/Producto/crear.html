@@ -1,0 +1,101 @@
+{% extends 'administrador/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}<title>Registrar Producto</title>{% endblock title%}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                <div class="card-header"><h3 class="text-center font-weight-light my-4">Nuevo Producto</h3></div>
+                <div class="card-body">
+                    <form method="post" role="form" action="" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-floating mb-3">
+                            {{form.nombreProd|as_crispy_field}}
+                        </div>
+                        <div class="form-floating mb-3">
+                            {{form.coleccion|as_crispy_field}}
+                        </div>
+                        <div class="form-floating mb-3">
+                            {{form.material|as_crispy_field}}
+                        </div>
+                        <div class="form-floating mb-3">
+                            {{form.color|as_crispy_field}}
+                        </div>
+                        <div class="form-floating mb-3">
+                            {{form.precio|as_crispy_field}}
+                        </div>
+                        <div class="form-floating mb-3">
+                            {{form.existencias|as_crispy_field}}
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            {{form.categoria|as_crispy_field}}
+                        </div>
+                        <div class="form-floating mb-3">
+                            {{form.subCategoria|as_crispy_field}}
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            {{form.imagen|as_crispy_field}}
+                        </div>
+
+                        <div class="mt-4 mb-0">
+                            <div class="d-grid"><input type="submit" value="Finalizar" class="btn btn-primary btn-block"></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center py-3">
+                    <div class="small"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+
+    window.onload = VaciarSelects(); // Al cargar la página, que el select de Subcategoria esté vacío
+
+// SELECT DEPENDIENTE PARA LAS SUBCATEGORIAS====================================
+    $(document).ready(function(){
+        $("#id_categoria").on("change", getSubcategorias);    
+    });
+
+    function getSubcategorias(){
+        var categoriaId = $("#id_categoria").val();
+        if (categoriaId){
+            $("#id_subCategoria").html("");
+            var request = $.ajax({
+                type: "GET",
+                url: "{% url 'load_subcategorias' %}",
+                data: {
+                    "catId":categoriaId
+                },
+            });
+            request.done(function(response){
+                $("#id_subCategoria").html(response);
+               
+            });
+    
+        }else{
+            $("#id_subCategoria").html('<option value="" selected = "selected">-----------</option>');      
+            $("#id_subCategoria").trigger("change");
+        }
+    }
+//===========================================================================
+
+// ===========================================================================
+    function VaciarSelects(){
+        $("#id_subCategoria").html('<option value="" selected = "selected">-----------</option>');
+    }
+//==================================================================================
+
+</script>
+ 
+{% endblock content %}

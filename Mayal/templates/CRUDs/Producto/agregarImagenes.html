@@ -1,0 +1,79 @@
+{% extends 'administrador/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}<title>Registrar Producto</title>{% endblock title%}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                <div class="card-header"><h3 class="text-center font-weight-light my-4">Agregar Imagenes a: {{ producto }}</h3>
+                    <div align="center"><img src=" {{ producto.imagen.url }}" width="300" height="auto"/></div>
+                </div>
+
+                <div class="card-body">
+                    <form method="post" role="form" action=" {% url 'guardar_imagenes' producto.pk %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="form-group m-3" align="center">
+                            <label>Seleccionar más Imagenes para subir</label>
+                            <br><br>
+                            <input required name="imagenes" type="file" multiple class="form-control-file">
+                        </div>
+
+                        <div class="mt-4 mb-0" align="center">
+                            <a class="btn btn-danger" href="{% url 'listar_productos' %}"><i class="fa fa-arrow-left"
+                                aria-hidden="true"></i> Regresar</a>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button type="submit" class="btn btn-success float-right"><i class="fa fa-check"
+                                aria-hidden="true"></i> Guardar</button>
+
+                            {% comment %} <div class="d-grid"><input type="submit" value="Finalizar" class="btn btn-primary btn-block"></div> {% endcomment %}
+                        </div>
+                    </form>
+                    <br>
+                    <div class="row" align="center">
+                        {% for ip in imagenesProducto %}
+                           
+                                <div class="card">
+                                    <div class="card-body"   align="center">
+                                        <img src=" {{ ip.imagen.url }}"  width="300" height="auto"  align="center"/>
+                                    </div>
+                                    <div class="card-footer" align="center">
+                                        <a class="btn btn-danger" href="#" onclick="eliminarImagenProducto({{ ip.id }})"><i class="fa fa-trash" aria-hidden="true" style="font-size:24px;color:rgb(255, 255, 255);text-shadow:2px 2px 4px #000000;"></i></a>
+                                    </div>
+                                </div>
+                       
+                        {% endfor %}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+{% endblock content %}
+
+{% block js %}
+    <script>
+        function eliminarImagenProducto(id){
+            Swal.fire({
+                title: 'Estas seguro?',
+                showCancelButton: true,
+                confirmButtonText: 'Si, Eliminar',
+                confirmButtonColor: '#FF0000',
+                cancelButtonText: 'No, Cancelar',
+                reverseButtons: true,
+
+            }).then(function(result) {
+                if (result.isConfirmed) {
+                    window.location.href = "/administrador/borrarImagen/"+id
+                }
+            })
+        }
+    </script>
+{% endblock js%}
