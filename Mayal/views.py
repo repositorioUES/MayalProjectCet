@@ -125,3 +125,12 @@ def borrarImagen(request, id):
     messages.success(request, " Imagen eliminada correctamente")
 
     return HttpResponseRedirect('/administrador/agregarImagenes/' + str(producto.id) +'/')
+
+
+
+# INICIO DE TIENDA----------------------------------------------------------------------------------
+def indexTienda(request):
+    context = {}
+    return render(request, 'tienda/index.html', context)
+
+    
