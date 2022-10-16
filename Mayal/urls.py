@@ -32,7 +32,12 @@ urlpatterns = [
     path('ajax/load_Subcategorias_Edit/', load_Subcategorias_Edit, name='load_subcategorias_Edit'),
     
     # URLs para la TIENDA ----------------------------------------------------------------------------------------------
-    path('', indexTienda, name="tienda"),
+	path('', store, name="store"),
+	path('cart/', cart, name="cart"),
+	path('checkout/', checkout, name="checkout"),
+
+	path('update_item/', updateItem, name="update_item"),
+	path('process_order/', processOrder, name="process_order"),
 ]
 
 # Para mostrar las imagenes guardadas -----------------------------------------------------------------------------------------
