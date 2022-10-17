@@ -11,7 +11,7 @@
         <!-- PARA EL SELECT MULTIPLE Y AJAX -->
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js" defer></script>
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            {% comment %} <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer" /> {% endcomment %}
 
         <!---->
 
@@ -101,18 +101,111 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- ZONA PARA EL CHATBOT ================================================================================================================= -->
+                        <!-- Icono para abrir y cerrar el chat -->
+                        <label>
+                            <i  class="fab fa-facebook-messenger" id="msn" onclick="mostrar()"
+                                style="position:absolute; right:30px; bottom:50px; height:35px; width:35px; background:#da79af; color:#fff; padding:10px; border-radius:50px;
+                                        cursor:pointer; transition: all 0.4s ease;">ChatBot</i>
+                            <i  class="fab fa-facebook-messenger" id="msn" onclick="mostrar()"
+                                style="position:absolute; right:30px; bottom:50px; height:35px; width:35px; background:#da79af; color:#fff; padding:10px; border-radius:50px;
+                                        cursor:pointer; transition: all 0.4s ease;"></i>
+                            <i  class="fas fa-times" id="ex" onclick="ocultar()"
+                                style="position:absolute; right:30px; bottom:50px; height:35px; width:35px; background:#da79af; color:#fff; padding:10px; border-radius:50px;
+                                        cursor:pointer; transition: all 0.4s ease;"></i>
+                        </label>
+                        <!-- FIN Icono para abrir y cerrar el chat -->
+                        <!-- Contenedor del chatbot -->
+                        <div  id="container" style="position: absolute; right: 30px; bottom:110px; max-height:600px; background:#fff; padding:10px; border-radius:12px; box-shadow: 0px 15px 20px rgba(0,0,0,0.5);">
+                            <div  id="chat_place" style="max-width:500px; max-height:475px; overflow:auto; background:#fff; padding:10px;">
+                                <div class="alert alert-warning" role="alert" style="width:350px; margin-right: 10px; background:#da79af; color:#000" opacity="0.1">
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <strong>May-Bot</strong>
+                                                <br>
+                                                <span class="text"> Hola! Soy May-Bot, Si tienes dudas puedes preguntarme</span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- FIN del Contenedor del chatbot -->
+                            <!-- Textfield -->
+                            <div>    
+                                <input type="textfiled"  placeholder="Preguntale a May-Bot" name="message" id="msj" size="45" style="" on>
+                            
+                                <button type="submit" class="btn btn-info" onclick="getChat()" style="margin:10px;" ><i class="fa fa-paper-plane"
+                                    aria-hidden="true"></i> Enviar</button>
+                            </div>
+                        </div>
+                        <!-- FIN ZONA PARA EL CHATBOT ================================================================================================================= -->
+                    </div>
                 </main>
                 {% endblock content %}
-            <!-- Fin Seccion BODY-->
+                <!-- Fin Seccion BODY-->
 
-            <!-- Seccion FOOTER-->
+                <!-- Seccion FOOTER-->
                 {% block js %}
                     {% include 'administrador/footer.html' %}
+
+                    <!-- AJAX PARA EL CHATBOT ========================================================================== -->
+                    <script type="text/javascript">
+                        //Ejecutar funcion al carga la p[agina
+                        window.onload = ocultar();
+
+                        // Disparar la accion al darle al Enter
+                        $(document).ready(function() {    
+                            $('#msj').keypress(function(e){   
+                            if(e.which == 13){      
+                                getChat();      
+                            }   
+                            });    
+                            
+                        });
+                        
+                        var texto = ""; // Striong para ir concat los mensajes
+                        function getChat(){
+                            var message = $("#msj").val();
+                            if (message){
+                                
+                                var request = $.ajax({
+                                    type: "GET",
+                                    url: "{% url 'chat' %}",
+                                    data: {
+                                        "message":message
+                                    },
+                                });
+                                request.done(function(response){
+                                    texto += response;
+                                    $("#chat_place").html(texto);
+                                    var toBottom = document.getElementById("chat_place");
+                                    toBottom.scrollTop = toBottom.scrollHeight;
+                                });
+                                document.getElementById("msj").value = "";
+                            }   
+                        }
+
+                        function ocultar(){
+                            document.getElementById('container').style.display = 'none';
+                            document.getElementById('ex').style.display = 'none';
+                            document.getElementById('msn').style.display = 'inline';
+                        }
+
+                        function mostrar(){
+                            document.getElementById('container').style.display = 'inline';
+                            document.getElementById('msn').style.display = 'none';
+                            document.getElementById('ex').style.display = 'inline';
+                        }
+
+                    </script>
+                    <!-- FIN AJAX PARA EL CHATBOT ========================================================================== -->
+
                 {% endblock js %}
-            <!-- Fin Seccion FOOTER-->
+                <!-- Fin Seccion FOOTER-->
 
             </div>
-        </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script type="text/javascript" src="{% static 'js/scripts.js' %}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>

@@ -1,0 +1,69 @@
+{% extends 'administrador/base.html' %}
+{% load static %}
+
+{% block title %}<title>Preguntas Frecuentes</title>{% endblock title%}
+
+{% block content %}
+
+        <div class="container-fluid px-4">
+            <h1 class="mt-4"></h1>
+        </div>
+
+        <!-- Seccion Tablas-->
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-question me-1"></i>Preguntas Frecuentes
+            </div>&nbsp;
+
+            {% comment %} <div class="d-flex justify-content start">&nbsp;&nbsp;&nbsp;
+                <a class="btn btn-primary" href="{% url 'crear_subcategoria' %}" ><i class="fa fa-plus" aria-hidden="true"></i> Nueva Subcategoria</a>&nbsp;
+            </div> {% endcomment %}
+
+
+            <div class="card-body">
+                <p>
+                    <B>Q1: ¿Qué formas de pago aceptan?</B>
+                </p>
+                <p>
+                    R1: Aceptamos transferencias con tarjeta de crédito y débito, pagos por medio  de Paypal y también pagos con Bitcoin y Ethreum.
+                </p>
+                <p>
+                    <B>Q2: ¿Cómo puedo pedir un accesorio personalizado?</B>
+                </p>
+                <p>
+                    R2: Puedes ponerte en contacto con nosotros por medio de nuestras redes sociales, nos describes tu idea y puedes envirnos fotos de tu diseño o referencias que te gusten.
+                </p>
+                <p>
+                    <B>Q3: Si adezco de alergia a cierto material, ¿Toman eso en cuenta al momento de elaborar sus accesorios?</B>
+                </p>
+                <p>
+                    R3: Por supuesto, si te gusta algún diseño, pero padeces alergia al material, podemos confeccionarlo con materiales hipoalergénicos.
+                </p>
+                <p>
+                    <B>Q4: ¿Qué tipo de productos de belleza ofrecen?</B>
+                </p>
+                <p>
+                    R4: Los Productos de belleza que ofrecemos: Cremas para Cara y Cuerpo, Cremas para peinar, Tratamientos para el cabello y Maquillaje, todos de la más alta calidad y de marcas recinocidas.
+                </p>
+                <p>
+                    <B>Q5: ¿Qué tipo de accesorios puedo encontrar con ustedes?</B>
+                </p>
+                <p>
+                    R5: Los Accesorios que ofrecemos: Anillos, Collares, Pulseras, Brazaletes, Vinchas, Peintas y Aretes, de colecciones especiales o puedes pedir un estilo personalizado.
+                </p>
+                <p>
+                    <B>Q6: ¿Hacen entregas a domicilio?</B>
+                </p>
+                <p>
+                    R6: Así es, realizamos entregas a la puerta de su casa o en algún lugar público, como centros comerciales o parques, sólo debes proporcionarnos la ubicación de entrega.
+                </p>
+                <p>
+                    <B>Q7: ¿Donde puedo obtener más información a cerca de sus productos?</B>
+                </p>
+                <p>
+                    R7: Puedes consultar más información básica con nuestro chatbot May-Bot, está disponible en la pantalla de catálogo de productos.
+                </p>
+            </div>
+        </div>
+   
+{% endblock content%}
