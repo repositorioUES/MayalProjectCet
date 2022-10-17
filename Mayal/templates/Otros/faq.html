@@ -1,4 +1,4 @@
-{% extends 'administrador/base.html' %}
+{% extends 'tienda/main.html' %}
 {% load static %}
 
 {% block title %}<title>Preguntas Frecuentes</title>{% endblock title%}
@@ -15,9 +15,9 @@
                 <i class="fas fa-question me-1"></i>Preguntas Frecuentes
             </div>&nbsp;
 
-            {% comment %} <div class="d-flex justify-content start">&nbsp;&nbsp;&nbsp;
-                <a class="btn btn-primary" href="{% url 'crear_subcategoria' %}" ><i class="fa fa-plus" aria-hidden="true"></i> Nueva Subcategoria</a>&nbsp;
-            </div> {% endcomment %}
+            <div class="d-flex justify-content start">&nbsp;&nbsp;&nbsp;
+                <a class="btn btn-danger" href="{% url 'store' %}" ><i class="fa fa-arrow-left" aria-hidden="true"></i>  Regresar</a>&nbsp;
+            </div>
 
 
             <div class="card-body">

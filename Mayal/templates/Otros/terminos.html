@@ -1,4 +1,4 @@
-{% extends 'administrador/base.html' %}
+{% extends 'tienda/main.html' %}
 {% load static %}
 
 {% block title %}<title>Terminos</title>{% endblock title%}
@@ -12,57 +12,42 @@
         <!-- Seccion Tablas-->
         <div class="card mb-4">
             <div class="card-header">
-                <i class="fas fa-file me-1"></i>Términos de Venta
+                <i class="fas fa-file me-1"></i>Términos y Condiciones
             </div>&nbsp;
 
-            {% comment %} <div class="d-flex justify-content start">&nbsp;&nbsp;&nbsp;
-                <a class="btn btn-primary" href="{% url 'crear_subcategoria' %}" ><i class="fa fa-plus" aria-hidden="true"></i> Nueva Subcategoria</a>&nbsp;
-            </div> {% endcomment %}
+            <div class="d-flex justify-content start">&nbsp;&nbsp;&nbsp;
+                <a class="btn btn-danger" href="{% url 'store' %}" ><i class="fa fa-arrow-left" aria-hidden="true"></i> Regresar</a>&nbsp;
+            </div>
 
 
             <div class="card-body">
+                <h4>1. Introducción</h4>
                 <p>
-                    <B>Q1: ¿Qué formas de pago aceptan?</B>
+                    Estas Condiciones de Uso, el Aviso sobre Privacidad, los Términos para dispositivos móviles y todas las políticas publicadas en nuestros sitios
+                     Web, establecen las condiciones bajo las cuales MAYAL te ofrece acceso a nuestros sitios web, servicios, aplicaciones y herramientas
+                      (denominados conjuntamente como "Servicios"). Consulta la descripción general de nuestras políticas. Todas las políticas de MAYAL y el 
+                      Aviso sobre Privacidad del Usuario de MAYAL son parte integrante de estas Condiciones de Uso. Aceptas cumplir con todo lo anterior cuando 
+                      utilices nuestros Servicios.
                 </p>
+                <h4>2. Ámbito</h4>
                 <p>
-                    R1: Aceptamos transferencias con tarjeta de crédito y débito, pagos por medio  de Paypal y también pagos con Bitcoin y Ethreum.
+                    Mayal es una plataforma de compraventa que permite a los usuarios comprar accesorios y productos de belleza, en una amplia variedad de formatos de precio.
+
+                    Podemos orientar acerca de precios, gastos de envío, y otras cuestiones en nuestros Servicios, si bien dichas orientaciones se realizan 
+                    a título informativo, por lo que puedes optar por no seguirlas.
                 </p>
-                <p>
-                    <B>Q2: ¿Cómo puedo pedir un accesorio personalizado?</B>
-                </p>
-                <p>
-                    R2: Puedes ponerte en contacto con nosotros por medio de nuestras redes sociales, nos describes tu idea y puedes envirnos fotos de tu diseño o referencias que te gusten.
-                </p>
-                <p>
-                    <B>Q3: Si adezco de alergia a cierto material, ¿Toman eso en cuenta al momento de elaborar sus accesorios?</B>
-                </p>
-                <p>
-                    R3: Por supuesto, si te gusta algún diseño, pero padeces alergia al material, podemos confeccionarlo con materiales hipoalergénicos.
-                </p>
-                <p>
-                    <B>Q4: ¿Qué tipo de productos de belleza ofrecen?</B>
-                </p>
-                <p>
-                    R4: Los Productos de belleza que ofrecemos: Cremas para Cara y Cuerpo, Cremas para peinar, Tratamientos para el cabello y Maquillaje, todos de la más alta calidad y de marcas recinocidas.
-                </p>
-                <p>
-                    <B>Q5: ¿Qué tipo de accesorios puedo encontrar con ustedes?</B>
-                </p>
-                <p>
-                    R5: Los Accesorios que ofrecemos: Anillos, Collares, Pulseras, Brazaletes, Vinchas, Peintas y Aretes, de colecciones especiales o puedes pedir un estilo personalizado.
-                </p>
-                <p>
-                    <B>Q6: ¿Hacen entregas a domicilio?</B>
-                </p>
-                <p>
-                    R6: Así es, realizamos entregas a la puerta de su casa o en algún lugar público, como centros comerciales o parques, sólo debes proporcionarnos la ubicación de entrega.
-                </p>
-                <p>
-                    <B>Q7: ¿Donde puedo obtener más información a cerca de sus productos?</B>
-                </p>
-                <p>
-                    R7: Puedes consultar más información básica con nuestro chatbot May-Bot, está disponible en la pantalla de catálogo de productos.
-                </p>
+                <h4>3. Uso de Mayal</h4>
+              
+                    
+                    <ul>
+                        <li>Infringir o eludir ninguna ley, derechos de terceros o nuestras políticas</li>
+                        <li>Usar nuestros Servicios si no tienes plena capacidad de obrar (por ejemplo, si eres menor de 18 años), o has sido suspendido temporal o permanentemente de nuestros sitios Web</li>
+                        <li>Manipular el precio de un artículo o interferir en los pedidos de otro usuario</li>
+                        <li>Publicar contenido falso, incorrecto, engañoso, difamatorio o calumnioso</li>
+                        <li>Utilizar los datos de contacto de otro usuario con fines que no estén relacionados con una transacción en el sitio de Mayal en concreto</li>
+                        <li>Copiar, modificar o distribuir derechos o contenido de nuestros sitios Web o los derechos de autor y marcas comerciales de Mayal</li>
+                    </ul>
+    
             </div>
         </div>
    
