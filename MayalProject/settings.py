@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Mayal',
     'crispy_forms',
+    'django_social_share',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

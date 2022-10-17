@@ -1,5 +1,6 @@
 {% extends 'tienda/main.html' %}
 {% load static %}
+{% load social_share %}
 {% block content %}
 	<div class="row">
 		{% for product in products %}
@@ -10,9 +11,14 @@
 				<hr>
 
 				<button data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Agregar</button>
-				
-				<a class="btn btn-outline-success" href="#">Ver</a>
+
+
+
+				<a class="btn btn-primary" href="http://www.facebook.com/sharer.php?u=http://127.0.0.1:8000/"><i class="fa-brands fa-facebook"></i></a>
+				<a class="btn btn-success" href="https://api.whatsapp.com/send?text=http%3A//127.0.0.1%3A8000/"><i class="fa-brands fa-whatsapp"></i></a>
+				<a class="btn btn-info" href="https://twitter.com/intent/tweet?text=http://127.0.0.1:8000/"><i class="fa-brands fa-twitter"></i></a>
 				<h4 style="display: inline-block; float: right"><strong>${{product.precio}}</strong></h4>
+				
 
 			</div>
 		</div>
