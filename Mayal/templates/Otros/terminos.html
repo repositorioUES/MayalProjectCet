@@ -1,0 +1,54 @@
+{% extends 'tienda/main.html' %}
+{% load static %}
+
+{% block title %}<title>Terminos</title>{% endblock title%}
+
+{% block content %}
+
+        <div class="container-fluid px-4">
+            <h1 class="mt-4"></h1>
+        </div>
+
+        <!-- Seccion Tablas-->
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-file me-1"></i>Términos y Condiciones
+            </div>&nbsp;
+
+            <div class="d-flex justify-content start">&nbsp;&nbsp;&nbsp;
+                <a class="btn btn-danger" href="{% url 'store' %}" ><i class="fa fa-arrow-left" aria-hidden="true"></i> Regresar</a>&nbsp;
+            </div>
+
+
+            <div class="card-body">
+                <h4>1. Introducción</h4>
+                <p>
+                    Estas Condiciones de Uso, el Aviso sobre Privacidad, los Términos para dispositivos móviles y todas las políticas publicadas en nuestros sitios
+                     Web, establecen las condiciones bajo las cuales MAYAL te ofrece acceso a nuestros sitios web, servicios, aplicaciones y herramientas
+                      (denominados conjuntamente como "Servicios"). Consulta la descripción general de nuestras políticas. Todas las políticas de MAYAL y el 
+                      Aviso sobre Privacidad del Usuario de MAYAL son parte integrante de estas Condiciones de Uso. Aceptas cumplir con todo lo anterior cuando 
+                      utilices nuestros Servicios.
+                </p>
+                <h4>2. Ámbito</h4>
+                <p>
+                    Mayal es una plataforma de compraventa que permite a los usuarios comprar accesorios y productos de belleza, en una amplia variedad de formatos de precio.
+
+                    Podemos orientar acerca de precios, gastos de envío, y otras cuestiones en nuestros Servicios, si bien dichas orientaciones se realizan 
+                    a título informativo, por lo que puedes optar por no seguirlas.
+                </p>
+                <h4>3. Uso de Mayal</h4>
+              
+                    
+                    <ul>
+                        <li>Infringir o eludir ninguna ley, derechos de terceros o nuestras políticas</li>
+                        <li>Usar nuestros Servicios si no tienes plena capacidad de obrar (por ejemplo, si eres menor de 18 años), o has sido suspendido temporal o permanentemente de nuestros sitios Web</li>
+                        <li>Manipular el precio de un artículo o interferir en los pedidos de otro usuario</li>
+                        <li>Publicar contenido falso, incorrecto, engañoso, difamatorio o calumnioso</li>
+                        <li>Utilizar los datos de contacto de otro usuario con fines que no estén relacionados con una transacción en el sitio de Mayal en concreto</li>
+                        <li>Copiar, modificar o distribuir derechos o contenido de nuestros sitios Web o los derechos de autor y marcas comerciales de Mayal</li>
+                    </ul>
+    
+            </div>
+        </div>
+   
+{% endblock content%}

@@ -27,9 +27,13 @@ urlpatterns = [
     path('administrador/guardarImagenes/<int:pk>/',GuardarImagenes, name='guardar_imagenes'),
     path('administrador/borrarImagen/<id>/',borrarImagen, name='borrar_imagen'),
 
+    path('store/preguntasFrecuentes/', preguntas, name='faq'),
+    path('store/terminosVS/', terminos, name='terminos'),
+
     # URLs para las funciones AJAX ----------------------------------------------------------------------------------------------
     path('ajax/load_Subcategorias/', load_Subcategorias, name='load_subcategorias'),
     path('ajax/load_Subcategorias_Edit/', load_Subcategorias_Edit, name='load_subcategorias_Edit'),
+    path('ajax/simple_chatbot/', chatBot, name='chat'),
     
     # URLs para la TIENDA ----------------------------------------------------------------------------------------------
 	path('', store, name="store"),

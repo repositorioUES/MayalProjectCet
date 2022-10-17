@@ -1,9 +1,15 @@
 from email.mime import image
-from django.shortcuts import render
-from Mayal.models import *
-from Mayal.forms import *
-from django.views.generic.edit import View, UpdateView, CreateView, DeleteView
+from multiprocessing import context
+
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse, reverse_lazy
+from django.views.generic.edit import CreateView, DeleteView, UpdateView, View
 from django.views.generic.list import ListView
+
+from Mayal.forms import *
+from Mayal.models import *
+
 from django.contrib import messages
 from django.shortcuts import render, redirect, render,get_object_or_404
 from django.urls import reverse_lazy, reverse
@@ -130,7 +136,6 @@ def borrarImagen(request, id):
     return HttpResponseRedirect('/administrador/agregarImagenes/' + str(producto.id) +'/')
 
 
-
 # INICIO DE TIENDA----------------------------------------------------------------------------------
 def store(request):
 	data = cartData(request)
@@ -217,3 +222,14 @@ def processOrder(request):
 		)
 
 	return JsonResponse('Payment submitted..', safe=False)
+
+
+# PREGUNTAS FRECUENTES ----------------------------------------------------------------------------------
+def preguntas(request):
+    context={}
+    return render(request,'Otros/faq.html', context)
+
+# TERMINOS DE VENTA Y SERVICIO ----------------------------------------------------------------------------------
+def terminos(request):
+    context={}
+    return render(request,'Otros/terminos.html', context)
