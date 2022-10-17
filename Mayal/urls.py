@@ -6,6 +6,7 @@ from .views import *
 from .ajax import *
 
 urlpatterns = [
+    # URLs para panel de ADMINISTRADOR ----------------------------------------------------------------------------------------------
     path('administrador', index, name="index"),
 
     path('administrador/listadoCategorias/', ListadosCatSubcat, name='listar_categorias'),
@@ -34,6 +35,13 @@ urlpatterns = [
     path('ajax/load_Subcategorias_Edit/', load_Subcategorias_Edit, name='load_subcategorias_Edit'),
     path('ajax/simple_chatbot/', chatBot, name='chat'),
     
+    # URLs para la TIENDA ----------------------------------------------------------------------------------------------
+	path('', store, name="store"),
+	path('cart/', cart, name="cart"),
+	path('checkout/', checkout, name="checkout"),
+
+	path('update_item/', updateItem, name="update_item"),
+	path('process_order/', processOrder, name="process_order"),
 ]
 
 # Para mostrar las imagenes guardadas -----------------------------------------------------------------------------------------
