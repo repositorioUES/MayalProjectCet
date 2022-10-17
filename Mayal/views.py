@@ -6,7 +6,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic.edit import CreateView, DeleteView, UpdateView, View
 from django.views.generic.list import ListView
-
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required, permission_required
 from Mayal.forms import *
 from Mayal.models import *
 
@@ -137,6 +138,7 @@ def borrarImagen(request, id):
 
 
 # INICIO DE TIENDA----------------------------------------------------------------------------------
+
 def store(request):
 	data = cartData(request)
 
@@ -233,3 +235,25 @@ def preguntas(request):
 def terminos(request):
     context={}
     return render(request,'Otros/terminos.html', context)
+
+# LOGIN ----------------------------------------------------------------------------------
+
+def registro(request):
+    data = {
+        'form': CustomUserCreationForm()
+    }
+
+    if request.method == 'POST':
+        formulario = CustomUserCreationForm(data=request.POST)
+        if formulario.is_valid():
+            formulario.save()
+
+            #bitacora(request.user, "Registro de usuario: " + formulario.username)
+
+            user = authenticate(username=formulario.cleaned_data["username"],
+                                password=formulario.cleaned_data["password1"])
+            login(request, user)
+            messages.success(request, "Registro exitoso")
+            return redirect(to="index")
+        data["form"] = formulario
+    return render(request, 'registration/registro.html', data)

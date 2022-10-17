@@ -42,6 +42,8 @@ urlpatterns = [
 
 	path('update_item/', updateItem, name="update_item"),
 	path('process_order/', processOrder, name="process_order"),
+
+    path('registro/', registro, name="registro"),
 ]
 
 # Para mostrar las imagenes guardadas -----------------------------------------------------------------------------------------
