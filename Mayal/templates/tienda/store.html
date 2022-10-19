@@ -74,14 +74,14 @@
                         window.onload = ocultar();
 
                         // Disparar la accion al darle al Enter
-                        $(document).ready(function() {    
+                            
                             $('#msj').keypress(function(e){   
                             if(e.which == 13){      
                                 getChat();      
                             }   
                             });    
                             
-                        });
+                    
                         
                         var texto = ""; // Striong para ir concat los mensajes
                         function getChat(){

@@ -89,15 +89,18 @@ def check_all_messages(message):
 	response('Los Productos de belleza que ofrecemos: Cremas para Cara y Cuerpo, Cremas para peinar, Tratamientos para el cabello y Maquillaje, todos de la más alta calidad y de marcas recinocidas',['tipo','tipos','clase','clases','belleza','bellesa','beyesa','producto','productos'], single_response=True)
 
 # 7 Donde hallar los Accesorios -----------------------
-	response('Los puede encontrar en la categoría de ACCESORIOS',['anillos','anillo','collares','collar','pulsera','pulseras','arito','aritos','arete','aretes','vincha','vinchas','peineta','peinetas'], single_response=True)
+	response('Los puede encontrar en la categoría de ACCESORIOS',['venden','vende','tiene','tienen','anillos','anillo','collares','collar','pulsera','pulseras','arito','aritos','arete','aretes','vincha','vinchas','peineta','peinetas'], single_response=True)
 # 8 Donde hallar los Productos de Belleza -------------
-	response('Los puede encontrar en la categoría de PRODUCTOS DE BELLEZA',['producto','productos','crema','cremas','para','cara','facial','cuerpo','mano','manos','cabello','pelo','peinar','maquillaje','maquillajes','sombra','ojos','labial','labiales','pintalabio','pintalabios','labios','pinta','labios','tratamiento','tratamientos','acondicionador','acondicionadores'], single_response=True)
+	response('Los puede encontrar en la categoría de PRODUCTOS DE BELLEZA',['venden','vende','tiene','tienen','producto','productos','crema','cremas','para','cara','facial','cuerpo','mano','manos','cabello','pelo','peinar','maquillaje','maquillajes','sombra','ojos','labial','labiales','pintalabio','pintalabios','labios','pinta','labios','tratamiento','tratamientos','acondicionador','acondicionadores'], single_response=True)
 
 # 9 Como pedir Diseños personalizados -----------------
 	response('Puedes ponerte en contacto con nosotros por medio de nuestras redes sociales, nos describes tu idea y puedes envirnos fotos de tu diseño o referencias que te gusten',['pedir','quiero','pido','elegir','solicitar','diseño','personalizado','personalizados','estilo','propio'],single_response=True)
 
 # 10 Sobre May-Bot-------------------------------------
 	response('Soy May-Bot, el chatbot de accesorios MAYAL', ['sos','eres','humana','humano','persona','bot','robot'], single_response=True)
+
+# 11 Sobre Envios-------------------------------------
+	response('Realizamos entregas a domicilio o también podemos acordar la entrega en otro lugar, como un centro comercial o en tu lugar de trabajo, sólo necesitamos la direccón', ['envio','envíos','domicilio','entregas','entrega','realizan','hacen','hace'], single_response=True)
 
 	best_match = max(highest_prob, key=highest_prob.get)
 	
