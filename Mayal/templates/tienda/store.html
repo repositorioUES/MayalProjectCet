@@ -33,6 +33,11 @@
                             <i  class="fa-solid fa-xmark" id="ex" onclick="ocultar()"
                                 style="position:absolute; right:30px; bottom:50px; height:35px; width:35px; background:#da79af; color:#fff; padding:10px; border-radius:50px;
                                         cursor:pointer; transition: all 0.4s ease;"></i>
+
+                            <i  class="fa-solid fa-arrow-righ" id="fondo"
+                                style="position:absolute; right:87px; bottom:53px; height:25px; width:90px; background:#da79af; color:#da79af; padding:10px; border-radius:50px;
+                                        cursor:pointer; text-align: left;"></i>
+                            <label   id="texto" style="position:absolute; right:87px; bottom:53px; height:25px; width:90px; color:#fff;"><B>Chat Bot</B></label>
                         </label>
                         <!-- FIN Icono para abrir y cerrar el chat -->
                         <!-- Contenedor del chatbot -->
@@ -104,12 +109,16 @@
                             document.getElementById('container').style.display = 'none';
                             document.getElementById('ex').style.display = 'none';
                             document.getElementById('msn').style.display = 'inline';
+                            document.getElementById('texto').style.display = 'inline';
+                            document.getElementById('fondo').style.display = 'inline';
                         }
 
                         function mostrar(){
                             document.getElementById('container').style.display = 'inline';
                             document.getElementById('msn').style.display = 'none';
                             document.getElementById('ex').style.display = 'inline';
+                            document.getElementById('texto').style.display = 'none';
+                            document.getElementById('fondo').style.display = 'none';
                         }
 
         </script>
