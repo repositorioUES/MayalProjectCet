@@ -48,3 +48,31 @@ class ProductoForm(forms.ModelForm):
 			'subCategoria':'Subcategoria',
 			'imagen': 'Imagen Principal',
 		}
+
+class CustomUserCreationForm(UserCreationForm):
+
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2',]
+
+        labels = {
+            'username': 'Usuario'
+        }
+
+
+class UsuarioForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email', 'password', ]
+
+
+class CustomUserEditForm(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email',]
+        exclude = ['password']
+
+        labels = {
+            'username': 'Usuario'
+        }

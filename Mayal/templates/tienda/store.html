@@ -1,0 +1,129 @@
+{% extends 'tienda/main.html' %}
+{% load static %}
+{% load social_share %}
+{% block content %}
+	<div class="row">
+		{% for product in products %}
+		<div class="col-lg-4">
+			<img class="thumbnail" src="{{product.imagen.url}}">
+			<div class="box-element product">
+				<h6><strong>{{product.nombreProd}}</strong></h6>
+				<hr>
+
+				<button data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Agregar</button>
+
+
+
+				<a class="btn btn-primary" href="http://www.facebook.com/sharer.php?u=http://127.0.0.1:8000/"><i class="fa-brands fa-facebook"></i></a>
+				<a class="btn btn-success" href="https://api.whatsapp.com/send?text=http%3A//127.0.0.1%3A8000/"><i class="fa-brands fa-whatsapp"></i></a>
+				<a class="btn btn-info" href="https://twitter.com/intent/tweet?text=http://127.0.0.1:8000/"><i class="fa-brands fa-twitter"></i></a>
+				<h4 style="display: inline-block; float: right"><strong>${{product.precio}}</strong></h4>
+				
+
+			</div>
+		</div>
+		{% endfor %}
+
+		<!-- ZONA PARA EL CHATBOT ================================================================================================================= -->
+                        <!-- Icono para abrir y cerrar el chat -->
+                        <label>
+                            <i  class="fa-brands fa-rocketchat" id="msn" onclick="mostrar()"
+                                style="position:absolute; right:30px; bottom:50px; height:35px; width:35px; background:#da79af; color:#fff; padding:10px; border-radius:50px;
+                                        cursor:pointer; transition: all 0.4s ease;"></i>
+                            <i  class="fa-solid fa-xmark" id="ex" onclick="ocultar()"
+                                style="position:absolute; right:30px; bottom:50px; height:35px; width:35px; background:#da79af; color:#fff; padding:10px; border-radius:50px;
+                                        cursor:pointer; transition: all 0.4s ease;"></i>
+
+                            <i  class="fa-solid fa-arrow-righ" id="fondo"
+                                style="position:absolute; right:87px; bottom:53px; height:25px; width:90px; background:#da79af; color:#da79af; padding:10px; border-radius:50px;
+                                        cursor:pointer; text-align: left;"></i>
+                            <label   id="texto" style="position:absolute; right:87px; bottom:53px; height:25px; width:90px; color:#fff;"><B>Chat Bot</B></label>
+                        </label>
+                        <!-- FIN Icono para abrir y cerrar el chat -->
+                        <!-- Contenedor del chatbot -->
+                        <div  id="container" style="position: absolute; right: 30px; bottom:110px; max-height:600px; background:#fff; padding:10px; border-radius:12px; box-shadow: 0px 15px 20px rgba(0,0,0,0.5);">
+                            <div  id="chat_place" style="max-width:500px; max-height:475px; overflow:auto; background:#fff; padding:10px;">
+                                <div class="alert alert-warning" role="alert" style="width:350px; margin-right: 10px; background:#da79af; color:#000" opacity="0.1">
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <strong>May-Bot</strong>
+                                                <br>
+                                                <span class="text"> Hola! Soy May-Bot, Si tienes dudas puedes preguntarme</span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- FIN del Contenedor del chatbot -->
+                            <!-- Textfield -->
+                            <div>    
+                                <input type="textfiled"  placeholder="Preguntale a May-Bot" name="message" id="msj" size="45" style="" on>
+                            
+                                <button type="submit" class="btn btn-info" onclick="getChat()" style="margin:10px;" ><i class="fa fa-paper-plane"
+                                    aria-hidden="true"></i> Enviar</button>
+                            </div>
+                        </div>
+                        <!-- FIN ZONA PARA EL CHATBOT ================================================================================================================= -->
+	</div>
+
+
+<!-- AJAX PARA EL CHATBOT ========================================================================== -->
+    <script type="text/javascript">
+                //Ejecutar funcion al carga la p[agina
+                        window.onload = ocultar();
+
+                        // Disparar la accion al darle al Enter
+                            
+                            $('#msj').keypress(function(e){   
+                            if(e.which == 13){      
+                                getChat();      
+                            }   
+                            });    
+                            
+                    
+                        
+                        var texto = ""; // Striong para ir concat los mensajes
+                        function getChat(){
+                            var message = $("#msj").val();
+                            if (message){
+                                
+                                var request = $.ajax({
+                                    type: "GET",
+                                    url: "{% url 'chat' %}",
+                                    data: {
+                                        "message":message
+                                    },
+                                });
+                                request.done(function(response){
+                                    texto += response;
+                                    $("#chat_place").html(texto);
+                                    var toBottom = document.getElementById("chat_place");
+                                    toBottom.scrollTop = toBottom.scrollHeight;
+                                });
+                                document.getElementById("msj").value = "";
+                            }   
+                        }
+
+                        function ocultar(){
+                            document.getElementById('container').style.display = 'none';
+                            document.getElementById('ex').style.display = 'none';
+                            document.getElementById('msn').style.display = 'inline';
+                            document.getElementById('texto').style.display = 'inline';
+                            document.getElementById('fondo').style.display = 'inline';
+                        }
+
+                        function mostrar(){
+                            document.getElementById('container').style.display = 'inline';
+                            document.getElementById('msn').style.display = 'none';
+                            document.getElementById('ex').style.display = 'inline';
+                            document.getElementById('texto').style.display = 'none';
+                            document.getElementById('fondo').style.display = 'none';
+                        }
+
+        </script>
+<!-- FIN AJAX PARA EL CHATBOT ========================================================================== -->
+
+
+{% endblock content %}
+

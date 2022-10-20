@@ -1,9 +1,16 @@
 from email.mime import image
-from django.shortcuts import render
-from Mayal.models import *
-from Mayal.forms import *
-from django.views.generic.edit import View, UpdateView, CreateView, DeleteView
+from multiprocessing import context
+
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse, reverse_lazy
+from django.views.generic.edit import CreateView, DeleteView, UpdateView, View
 from django.views.generic.list import ListView
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required, permission_required
+from Mayal.forms import *
+from Mayal.models import *
+
 from django.contrib import messages
 from django.shortcuts import render, redirect, render,get_object_or_404
 from django.urls import reverse_lazy
@@ -207,3 +214,125 @@ def borrarImagen(request, id):
     messages.success(request, " Imagen eliminada correctamente")
 
     return HttpResponseRedirect('/administrador/agregarImagenes/' + str(producto.id) +'/')
+
+
+# INICIO DE TIENDA----------------------------------------------------------------------------------
+
+def store(request):
+	data = cartData(request)
+
+	cartItems = data['cartItems']
+	order = data['order']
+	items = data['items']
+
+	products = Producto.objects.all()
+	context = {'products':products, 'cartItems':cartItems}
+	return render(request, 'tienda/store.html', context)
+
+
+def cart(request):
+	data = cartData(request)
+
+	cartItems = data['cartItems']
+	order = data['order']
+	items = data['items']
+
+	context = {'items':items, 'order':order, 'cartItems':cartItems}
+	return render(request, 'tienda/cart.html', context)
+
+def checkout(request):
+	data = cartData(request)
+	
+	cartItems = data['cartItems']
+	order = data['order']
+	items = data['items']
+
+	context = {'items':items, 'order':order, 'cartItems':cartItems}
+	return render(request, 'tienda/checkout.html', context)
+
+def updateItem(request):
+	data = json.loads(request.body)
+	productId = data['productId']
+	action = data['action']
+	print('Action:', action)
+	print('Product:', productId)
+
+	customer = request.user.customer
+	product = Producto.objects.get(id=productId)
+	order, created = Order.objects.get_or_create(customer=customer, complete=False)
+
+	orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
+
+	if action == 'add':
+		orderItem.quantity = (orderItem.quantity + 1)
+	elif action == 'remove':
+		orderItem.quantity = (orderItem.quantity - 1)
+
+	orderItem.save()
+
+	if orderItem.quantity <= 0:
+		orderItem.delete()
+
+	return JsonResponse('Item was added', safe=False)
+
+def processOrder(request):
+	transaction_id = datetime.datetime.now().timestamp()
+	data = json.loads(request.body)
+
+	if request.user.is_authenticated:
+		customer = request.user.customer
+		order, created = Order.objects.get_or_create(customer=customer, complete=False)
+	else:
+		customer, order = guestOrder(request, data)
+
+	total = float(data['form']['total'])
+	order.transaction_id = transaction_id
+
+	if total == order.get_cart_total:
+		order.complete = True
+	order.save()
+
+	if order.shipping == True:
+		ShippingAddress.objects.create(
+		customer=customer,
+		order=order,
+		address=data['shipping']['address'],
+		city=data['shipping']['city'],
+		state=data['shipping']['state'],
+		zipcode=data['shipping']['zipcode'],
+		)
+
+	return JsonResponse('Payment submitted..', safe=False)
+
+
+# PREGUNTAS FRECUENTES ----------------------------------------------------------------------------------
+def preguntas(request):
+    context={}
+    return render(request,'Otros/faq.html', context)
+
+# TERMINOS DE VENTA Y SERVICIO ----------------------------------------------------------------------------------
+def terminos(request):
+    context={}
+    return render(request,'Otros/terminos.html', context)
+
+# LOGIN ----------------------------------------------------------------------------------
+
+def registro(request):
+    data = {
+        'form': CustomUserCreationForm()
+    }
+
+    if request.method == 'POST':
+        formulario = CustomUserCreationForm(data=request.POST)
+        if formulario.is_valid():
+            formulario.save()
+
+            #bitacora(request.user, "Registro de usuario: " + formulario.username)
+
+            user = authenticate(username=formulario.cleaned_data["username"],
+                                password=formulario.cleaned_data["password1"])
+            login(request, user)
+            messages.success(request, "Registro exitoso")
+            return redirect(to="index")
+        data["form"] = formulario
+    return render(request, 'registration/registro.html', data)

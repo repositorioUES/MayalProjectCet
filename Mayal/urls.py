@@ -33,10 +33,23 @@ urlpatterns = [
     path('administrador/guardarImagenes/<int:pk>/',GuardarImagenes, name='guardar_imagenes'),
     path('administrador/borrarImagen/<id>/',borrarImagen, name='borrar_imagen'),
 
+    path('store/preguntasFrecuentes/', preguntas, name='faq'),
+    path('store/terminosVS/', terminos, name='terminos'),
+
     # URLs para las funciones AJAX ----------------------------------------------------------------------------------------------
     path('ajax/load_Subcategorias/', load_Subcategorias, name='load_subcategorias'),
     path('ajax/load_Subcategorias_Edit/', load_Subcategorias_Edit, name='load_subcategorias_Edit'),
+    path('ajax/simple_chatbot/', chatBot, name='chat'),
     
+    # URLs para la TIENDA ----------------------------------------------------------------------------------------------
+	path('', store, name="store"),
+	path('cart/', cart, name="cart"),
+	path('checkout/', checkout, name="checkout"),
+
+	path('update_item/', updateItem, name="update_item"),
+	path('process_order/', processOrder, name="process_order"),
+
+    path('registro/', registro, name="registro"),
 ]
 
 # Para mostrar las imagenes guardadas -----------------------------------------------------------------------------------------
