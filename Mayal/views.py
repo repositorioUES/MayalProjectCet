@@ -10,7 +10,10 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, permission_required
 from Mayal.forms import *
 from Mayal.models import *
-
+from .utils import cookieCart, cartData, guestOrder
+from django.http import JsonResponse
+import json
+import datetime
 from django.contrib import messages
 from django.shortcuts import render, redirect, render,get_object_or_404
 from django.urls import reverse_lazy
@@ -86,7 +89,7 @@ def paypal(request):
 
     paypal_dict = {
         "business": "receiver_email@example.com",
-        "amount": "40.00",
+        "amount": "150.00",
         "item_name": "name of the item",
         "invoice": "unique-invoice-id",
         "notify_url": request.build_absolute_uri(reverse('paypal')),
@@ -257,9 +260,9 @@ def updateItem(request):
 	print('Action:', action)
 	print('Product:', productId)
 
-	customer = request.user.customer
+	user = request.user
 	product = Producto.objects.get(id=productId)
-	order, created = Order.objects.get_or_create(customer=customer, complete=False)
+	order, created = Order.objects.get_or_create(user=user, complete=False)
 
 	orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
 
@@ -280,10 +283,10 @@ def processOrder(request):
 	data = json.loads(request.body)
 
 	if request.user.is_authenticated:
-		customer = request.user.customer
-		order, created = Order.objects.get_or_create(customer=customer, complete=False)
+		user = request.user
+		order, created = Order.objects.get_or_create(user=user, complete=False)
 	else:
-		customer, order = guestOrder(request, data)
+		user, order = guestOrder(request, data)
 
 	total = float(data['form']['total'])
 	order.transaction_id = transaction_id
@@ -294,7 +297,7 @@ def processOrder(request):
 
 	if order.shipping == True:
 		ShippingAddress.objects.create(
-		customer=customer,
+		user=user,
 		order=order,
 		address=data['shipping']['address'],
 		city=data['shipping']['city'],
@@ -333,6 +336,46 @@ def registro(request):
                                 password=formulario.cleaned_data["password1"])
             login(request, user)
             messages.success(request, "Registro exitoso")
-            return redirect(to="index")
+            return redirect(to="/")
         data["form"] = formulario
     return render(request, 'registration/registro.html', data)
+
+
+# USUARIOS ----------------------------------------------------------------------------------
+
+def listarUsuario(request):
+    usuarios = User.objects.all()
+    data = {
+        'usuarios': usuarios,
+    }
+
+
+    return render(request, 'CRUDs/usuario/listarUsuario.html', data)
+
+
+
+@login_required
+def editarUsuario(request, id):
+    usuario = get_object_or_404(User, id=id)
+    data = {
+        'form': CustomUserEditForm(instance=usuario)
+    }
+
+    if request.method == 'POST':
+        formulario = CustomUserEditForm(data=request.POST, instance=usuario)
+        if formulario.is_valid():
+            formulario.save()
+
+            messages.success(request, " Usuario actualizado correctamente")
+            return redirect(to="listarUsuario")
+        data['form'] = formulario
+    return render(request, 'CRUDs/usuario/editarUsuario.html', data)
+
+
+@login_required
+def eliminarUsuario(request, id):
+    usuario = get_object_or_404(User, id=id)
+
+    usuario.delete()
+    messages.success(request, " Usuario eliminado correctamente")
+    return redirect(to="listarUsuario")

@@ -28,8 +28,7 @@ def cookieCart(request):
 
 				item = {
 				'id':product.id,
-				'product':{'id':product.id,'name':product.nombreProd, 'price':product.precio, 
-				'imageURL':product.imagen.url}, 'quantity':cart[i]['quantity'],'get_total':total,
+				'product':{'id':product.id,'nombreProd':product.nombreProd, 'precio':product.precio, 'imagen':product.imagen}, 'quantity':cart[i]['quantity'],'get_total':total,
 				}
 
 				items.append(item)
@@ -42,8 +41,9 @@ def cookieCart(request):
 
 def cartData(request):
 	if request.user.is_authenticated:
-		customer = request.user.customer
-		order, created = Order.objects.get_or_create(customer=customer, complete=False)
+		user = request.user
+		order, created = Order.objects.get_or_create(user=user, complete=False)
+		
 		items = order.orderitem_set.all()
 		cartItems = order.get_cart_items
 	else:
@@ -56,20 +56,20 @@ def cartData(request):
 
 	
 def guestOrder(request, data):
-	name = data['form']['name']
+	first_name = data['form']['first_name']
 	email = data['form']['email']
 
 	cookieData = cookieCart(request)
 	items = cookieData['items']
 
-	customer, created = Customer.objects.get_or_create(
+	user, created = User.objects.get_or_create(
 			email=email,
 			)
-	customer.name = name
-	customer.save()
+	user.first_name = first_name
+	user.save()
 
 	order = Order.objects.create(
-		customer=customer,
+		user=user,
 		complete=False,
 		)
 
@@ -80,5 +80,5 @@ def guestOrder(request, data):
 			order=order,
 			quantity=(item['quantity'] if item['quantity']>0 else -1*item['quantity']), # negative quantity = freebies
 		)
-	return customer, order
+	return user, order
 

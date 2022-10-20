@@ -49,7 +49,13 @@ urlpatterns = [
 	path('update_item/', updateItem, name="update_item"),
 	path('process_order/', processOrder, name="process_order"),
 
+    # URLs para LOGIN ----------------------------------------------------------------------------------------------
     path('registro/', registro, name="registro"),
+
+    # URLs para el Usuario ----------------------------------------------------------------------------------------------
+    path('administrador/listarUsuario', listarUsuario, name="listarUsuario"),
+    path('administrador/editarUsuario/<id>/', editarUsuario, name="editarUsuario"),
+    path('administrador/eliminarUsuario/<id>/', eliminarUsuario, name="eliminarUsuario"),
 ]
 
 # Para mostrar las imagenes guardadas -----------------------------------------------------------------------------------------

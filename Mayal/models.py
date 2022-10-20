@@ -32,10 +32,10 @@ class Producto(models.Model):
     color = models.CharField(max_length=250, null=True, blank=True)
     precio = models.DecimalField(max_digits = 5, decimal_places= 2)
     existencias = models.IntegerField(null=True, blank=True)
-
+	
     categoria = models.ForeignKey('Categoria', on_delete = models.SET_NULL, null=True)
     subCategoria = models.ForeignKey('Subcategoria', on_delete = models.SET_NULL, null=True)
-
+    digital = models.BooleanField(default=False,null=True, blank=True)
     imagen = models.ImageField(upload_to='Galeria')
 
     def __str__(self):
@@ -58,7 +58,7 @@ class Customer(models.Model):
 		return self.name
 
 class Order(models.Model):
-	customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
+	user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 	date_ordered = models.DateTimeField(auto_now_add=True)
 	complete = models.BooleanField(default=False)
 	transaction_id = models.CharField(max_length=100, null=True)
@@ -95,11 +95,11 @@ class OrderItem(models.Model):
 
 	@property
 	def get_total(self):
-		total = self.product.price * self.quantity
+		total = self.product.precio * self.quantity
 		return total
 
 class ShippingAddress(models.Model):
-	customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
+	user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 	order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
 	address = models.CharField(max_length=200, null=False)
 	city = models.CharField(max_length=200, null=False)

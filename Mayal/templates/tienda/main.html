@@ -87,7 +87,8 @@
 	    <div class="form-inline my-2 my-lg-0">
 
 			{% if request.user.is_authenticated %}
-			<a href="#"class="btn btn-warning"><i class="fa-duotone fa-user"></i>logout</a>
+			<div style="color:#ffffff;"><strong>Bienvenido:</strong> @{{user.first_name}} {{user.last_name}}</div>&nbsp;
+			<a href="{% url 'logout' %}" class="btn btn-warning"><i class="fa-duotone fa-user"></i>logout</a>
 			{% else %}
 			<a href="{% url 'login' %}" class="btn btn-warning"><i class="fa-duotone fa-user"></i>login</a>
 			{% endif %}
