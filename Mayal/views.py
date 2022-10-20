@@ -6,9 +6,91 @@ from django.views.generic.edit import View, UpdateView, CreateView, DeleteView
 from django.views.generic.list import ListView
 from django.contrib import messages
 from django.shortcuts import render, redirect, render,get_object_or_404
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.contrib import messages
 from django.http import HttpResponseRedirect,HttpResponse
+from django.views.generic import TemplateView
+from django.urls import reverse
+from django.views.generic import FormView
+from paypal.standard.forms import PayPalPaymentsForm
+from paypal.standard.models import ST_PP_COMPLETED
+from paypal.standard.ipn.signals import valid_ipn_received
+
+#@receiver(valid_ipn_received)
+def paypal_payment_received(sender, **kwargs):
+    ipn_obj = sender
+    if ipn_obj.payment_status == ST_PP_COMPLETED:
+        # WARNING !
+        # Check that the receiver email is the same we previously
+        # set on the `business` field. (The user could tamper with
+        # that fields on the payment form before it goes to PayPal)
+        if ipn_obj.receiver_email != 'your-paypal-business-address@example.com':
+            # Not a valid payment
+            return
+
+        # ALSO: for the same reason, you need to check the amount
+        # received, `custom` etc. are all what you expect or what
+        # is allowed.
+        try:
+            my_pk = ipn_obj.invoice
+            mytransaction = MyTransaction.objects.get(pk=my_pk)
+            assert ipn_obj.mc_gross == mytransaction.amount and ipn_obj.mc_currency == 'USD'
+        except Exception:
+            logger.exception('Paypal ipn_obj data not valid!')
+        else:
+            mytransaction.paid = True
+            mytransaction.save()
+    else:
+        logger.debug('Paypal payment status not completed: %s' % ipn_obj.payment_status)
+
+class PaypalFormView(FormView):
+    template_name = 'paypal_form.html'
+    form_class = PayPalPaymentsForm
+
+    def get_initial(self):
+        return {
+            "business": 'myeveryapps@gmail.com',
+            "amount": 40,
+            "currency_code": "USD",
+            "item_name": 'Ratón',
+            "invoice": 1234,
+            "notify_url": self.request.build_absolute_uri(reverse('paypal')),
+            "return_url": self.request.build_absolute_uri(reverse('paypal_return')),
+            "cancel_return": self.request.build_absolute_uri(reverse('paypal')),
+            "lc": 'SV',
+            "no_shipping": '0',
+        }
+
+class PaypalReturnView(TemplateView):
+    template_name = 'paypal_success.html'
+
+def paypal_return(request):
+    context = {}
+    return render(request, 'paypal/paypal_success.html', context)
+
+class PaypalCancelView(TemplateView):
+    template_name = 'paypal_cancel.html'
+
+
+# Create your views here.
+def paypal(request):
+    #return HttpResponse("Index");
+    # Create the instance.
+
+    paypal_dict = {
+        "business": "receiver_email@example.com",
+        "amount": "40.00",
+        "item_name": "name of the item",
+        "invoice": "unique-invoice-id",
+        "notify_url": request.build_absolute_uri(reverse('paypal')),
+        "return": request.build_absolute_uri(reverse('paypal')),
+        "cancel_return": request.build_absolute_uri(reverse('paypal')),
+        "custom": "premium_plan",  # Custom command to correlate to some function later (optional)
+    }
+
+    form = PayPalPaymentsForm(initial=paypal_dict)
+    context = {"form": form}
+    return render(request, "paypal/paypal_form.html", context)
 
 # Create your views here.
 def index(request):

@@ -1,12 +1,19 @@
-from django.urls import path
 from django.urls import path, include, re_path
 from django.conf import settings
 from django.views.static import serve
 from .views import *
 from .ajax import *
+from . import views
 
 urlpatterns = [
-    path('administrador', index, name="index"),
+    #Para los pagos de PayPal.
+    path('paypal/',paypal,name="paypal"),
+    path('paypal_return/', views.PaypalReturnView.as_view(), name='paypal_return'),
+    path('paypal-cancel/', views.PaypalCancelView.as_view(), name='paypal-cancel'),
+    #Fin de las vistas de pagos con PayPal.
+
+    #Vistas del administrador.
+    path('administrador/', index, name="index"),
 
     path('administrador/listadoCategorias/', ListadosCatSubcat, name='listar_categorias'),
     path('administrador/crearCategoria', CrearCategoria.as_view(), name="crear_categoria"),

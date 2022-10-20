@@ -10,7 +10,6 @@ from django.forms.fields import DateField
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-
 class CategoriaForm(forms.ModelForm):
 	class Meta:
 		model = Categoria
