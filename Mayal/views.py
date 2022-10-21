@@ -392,3 +392,38 @@ def eliminarUsuario(request, id):
     usuario.delete()
     messages.success(request, " Usuario eliminado correctamente")
     return redirect(to="listarUsuario")
+
+## importacion de librerias para modulo de seguimiento
+import folium
+import phonenumbers
+import os
+
+def seguimiento(request):
+    from phonenumbers import geocoder
+    number = "+505 77253153"
+
+    llave = '30e3f905fb6b4f5dbf4bf759a091fe8c'
+    
+    sanNumber = phonenumbers.parse(number)
+    tulocacion = geocoder.description_for_number(sanNumber,"en")
+    print(tulocacion)
+
+    ##obteniendo el nombre del proveedor del servicio
+    from phonenumbers import carrier
+    provedorServicio =phonenumbers.parse(number)
+    print(carrier.name_for_number(provedorServicio, "en"))
+    
+    ##generando el mapa 
+    from opencage.geocoder import OpenCageGeocode
+    geocoder = OpenCageGeocode(llave)
+    query = str(tulocacion)
+    resultado = geocoder.geocode(query)
+    lat = resultado[0]['geometry']['lat']
+    lng = resultado[0]['geometry']['lng']
+    mimapa = folium.Map(location=[lat, lng], zoom_start = 9)
+    folium.Marker([lat, lng],popup=tulocacion).add_to((mimapa))
+    ## Guardando nuestro mapa en un archivo html en donde se ubica este archivo
+    mimapa.save("miMapa.html")
+    html = open(os.path.dirname(os.path.realpath(__file__))  + '\miMapa.html', "r")   
+    
+    return HttpResponse(html.read())
