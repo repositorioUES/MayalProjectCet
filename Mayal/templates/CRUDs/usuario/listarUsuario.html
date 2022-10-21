@@ -13,7 +13,10 @@
     <div class="card-header">
         <i class="fas fa-table me-1"></i>Listado de Usuarios
     </div>&nbsp;
-
+    <div class="d-flex justify-content start">&nbsp;&nbsp;&nbsp;
+        <a class="btn btn-primary" href="{% url 'registro' %}" ><i class="fa fa-plus" aria-hidden="true"></i> Registrar Usuario</a>&nbsp;
+        
+    </div>
     <div class="card-body">
         <table id="datatablesSimple">
             <thead>
@@ -24,6 +27,7 @@
                     <th>Apellido</th>
                     <th>Correo</th>
                     <th>Ultima sesión</th>
+                    <th>Administrador</th>
                     <th>Gestionar</th>
                 </tr>
             </thead>
@@ -36,6 +40,7 @@
                     <td>{{ usuario.last_name }}</td>
                     <td>{{ usuario.email }}</td>
                     <td>{{ usuario.last_login }}</td>
+                    <td>{{ usuario.is_superuser }}</td>
                     <td> <a href="{% url 'editarUsuario' usuario.id %}"><i class="fa fa-pencil-square fa-2x" aria-hidden="true" style="font-size:24px;color:rgb(238, 204, 9);text-shadow:2px 2px 4px #000000;"></i></a>&nbsp;&nbsp;
                         <a href="#" onclick="eliminarUsuario({{ usuario.id }})"><i class="fa fa-minus-square fa-2x" aria-hidden="true" style="font-size:24px;color:rgb(212, 10, 10);text-shadow:2px 2px 4px #000000;"></i></a>
                     </td>
@@ -62,7 +67,7 @@
 
             }).then(function(result) {
                 if (result.isConfirmed) {
-                    window.location.href = "/usuario/eliminarUsuario/"+id+"/"
+                    window.location.href = "eliminarUsuario/"+id+"/"
                 }
             })
         }

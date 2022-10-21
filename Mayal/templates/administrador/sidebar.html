@@ -9,8 +9,12 @@
                         Dashboard
                     </a>
                     <a class="nav-link" href="{% url 'listarUsuario' %}">
-                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                        <div class="sb-nav-link-icon"><i class="fa fa-users"></i></div>
                         Usuarios
+                    </a>
+                    <a class="nav-link" href="{% url 'store' %}">
+                        <div class="sb-nav-link-icon"><i class="fa fa-shopping-bag"></i></div>
+                        Tienda
                     </a>
                     <div class="sb-sidenav-menu-heading">Mantenimiento</div>
                     <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
@@ -24,7 +28,6 @@
                             <a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a> {% endcomment %}
                             <a class="nav-link" href="{% url 'listar_productos' %}">Productos</a>
                             <a class="nav-link" href="{% url 'listar_categorias' %}">Categorias y Subcategorias</a>
-
                         </nav>
                     </div>
                     {% comment %}

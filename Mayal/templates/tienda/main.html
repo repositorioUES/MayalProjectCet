@@ -73,9 +73,12 @@
 
 	  <div class="collapse navbar-collapse" id="navbarSupportedContent">
 	    <ul class="navbar-nav mr-auto">
+			{% if request.user.is_superuser %}
 	      <li class="nav-item active">
-	        <a class="nav-link" href="{% url 'store' %}">Inicio <span class="sr-only">(current)</span></a>
+	        <a class="nav-link" href="{% url 'index' %}">Panel Admin <span class="sr-only">(current)</span></a>
 	      </li>
+		  {% else %}
+		  {% endif %}
 		  <li class="nav-item active">
 	        <a class="nav-link" href="{% url 'faq' %}">Preguntas Frecuentes <span class="sr-only">(current)</span></a>
 	      </li>
@@ -88,9 +91,9 @@
 
 			{% if request.user.is_authenticated %}
 			<div style="color:#ffffff;"><strong>Bienvenido:</strong> @{{user.first_name}} {{user.last_name}}</div>&nbsp;
-			<a href="{% url 'logout' %}" class="btn btn-warning"><i class="fa-duotone fa-user"></i>logout</a>
+			<a href="{% url 'logout' %}" class="btn btn-warning"><i class="fa-solid fa-right-to-bracket"></i> logout</a>
 			{% else %}
-			<a href="{% url 'login' %}" class="btn btn-warning"><i class="fa-duotone fa-user"></i>login</a>
+			<a href="{% url 'login' %}" class="btn btn-warning"><i class="fa-solid fa-user"></i> login</a>
 			{% endif %}
 	     	<a href="{% url 'cart' %}">
 	    		<img  id="cart-icon" src="{% static 'images/cart.png' %}">

@@ -14,6 +14,7 @@ from .utils import cookieCart, cartData, guestOrder
 from django.http import JsonResponse
 import json
 import datetime
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib import messages
 from django.shortcuts import render, redirect, render,get_object_or_404
 from django.urls import reverse_lazy
@@ -21,7 +22,7 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect,HttpResponse
 from django.views.generic import TemplateView
 from django.urls import reverse
-from django.views.generic import FormView
+from django.views.generic import FormView,View
 from paypal.standard.forms import PayPalPaymentsForm
 from paypal.standard.models import ST_PP_COMPLETED
 from paypal.standard.ipn.signals import valid_ipn_received
@@ -102,32 +103,39 @@ def paypal(request):
     context = {"form": form}
     return render(request, "paypal/paypal_form.html", context)
 
+class SuperUserCheck(UserPassesTestMixin, View):
+    def test_func(self):
+        return self.request.user.is_superuser
+
+
 # Create your views here.
+@permission_required('is_superuser')
 def index(request):
     context = {}
     return render(request, 'administrador/base.html', context)
 
 
 # CRUD ------ CATEGORIA------------------------------------------------------------------------------------
-
+@permission_required('is_superuser')
 def ListadosCatSubcat(request):
     categorias = Categoria.objects.all().order_by('nombreCat')
     subcategorias = Subcategoria.objects.all().order_by('categoria')
 
     return render(request,'CRUDs/Categoria/lista.html', {'categorias' : categorias, 'subcategorias' : subcategorias})
 
-class CrearCategoria(CreateView):
+class CrearCategoria(SuperUserCheck,CreateView):
     model = Categoria
     template_name = 'CRUDs/Categoria/crear.html'
     form_class = CategoriaForm
     success_url = reverse_lazy('listar_categorias')
 
-class ModificarCategoria(UpdateView):
+class ModificarCategoria(SuperUserCheck,UpdateView):
     model = Categoria
     template_name = 'CRUDs/Categoria/crear.html'
     form_class = CategoriaForm
     success_url = reverse_lazy('listar_categorias')
 
+@permission_required('is_superuser')
 def borrarCategoria(request, id):
     categoria = get_object_or_404(Categoria, id=id)
 
@@ -137,18 +145,19 @@ def borrarCategoria(request, id):
 
 # CRUD ------ SUBCATEGORIA----------------------------------------------------------------------------------
 
-class CrearSubcategoria(CreateView):
+class CrearSubcategoria(SuperUserCheck,CreateView):
     model = Subcategoria
     template_name = 'CRUDs/Subcategoria/crear.html'
     form_class = SubcategoriaForm
     success_url = reverse_lazy('listar_categorias')
 
-class ModificarSubcategoria(UpdateView):
+class ModificarSubcategoria(SuperUserCheck,UpdateView):
     model = Subcategoria
     template_name = 'CRUDs/Subcategoria/crear.html'
     form_class = SubcategoriaForm
     success_url = reverse_lazy('listar_categorias')
 
+@permission_required('is_superuser')
 def borrarSubcategoria(request, id):
     subcategoria = get_object_or_404(Subcategoria, id=id)
 
@@ -159,23 +168,26 @@ def borrarSubcategoria(request, id):
 
 # CRUD ------ PRODUCTO----------------------------------------------------------------------------------
 
-class ListadoProducto(ListView):
+
+class ListadoProducto(SuperUserCheck,ListView):
     model = Producto
     template_name = 'CRUDs/Producto//lista.html'
     context_object_name = 'productos'
 
-class CrearProducto(CreateView):
+
+class CrearProducto(SuperUserCheck,CreateView):
     model = Producto
     template_name = 'CRUDs/Producto/crear.html'
     form_class = ProductoForm
     success_url = reverse_lazy('listar_productos')
 
-class ModificarProducto(UpdateView):
+class ModificarProducto(SuperUserCheck,UpdateView):
     model = Producto
     template_name = 'CRUDs/Producto/editar.html'
     form_class = ProductoForm
     success_url = reverse_lazy('listar_productos')
-
+    
+@permission_required('is_superuser')
 def borrarProducto(request, id):
     producto = get_object_or_404(Producto, id=id)
 
@@ -185,13 +197,13 @@ def borrarProducto(request, id):
     return redirect(to="listar_productos")
 
 # CONTROL DE LAS IMAGENES DE CADA PRODUCTO----------------------------------------------------------------------------------
-
+@permission_required('is_superuser')
 def AgregarImagenes(request, pk):
     producto = get_object_or_404(Producto, id = pk)
     imagenesProducto = ImagenProducto.objects.filter(producto_id = pk)
 
     return render(request,'CRUDs/Producto/agregarImagenes.html', {'producto':producto,'imagenesProducto': imagenesProducto})
-
+@permission_required('is_superuser')
 def GuardarImagenes(request, pk):
     producto = get_object_or_404(Producto, id = pk)
 
@@ -209,6 +221,7 @@ def GuardarImagenes(request, pk):
             
     return render(request,'CRUDs/Producto/agregarImagenes.html', {'producto':producto})
 
+@permission_required('is_superuser')
 def borrarImagen(request, id):
     imagenProducto = get_object_or_404(ImagenProducto, id=id)
     producto = get_object_or_404(Producto, id = imagenProducto.producto_id)
@@ -342,7 +355,7 @@ def registro(request):
 
 
 # USUARIOS ----------------------------------------------------------------------------------
-
+@permission_required('is_superuser')
 def listarUsuario(request):
     usuarios = User.objects.all()
     data = {
@@ -354,7 +367,7 @@ def listarUsuario(request):
 
 
 
-@login_required
+@permission_required('is_superuser')
 def editarUsuario(request, id):
     usuario = get_object_or_404(User, id=id)
     data = {
@@ -372,7 +385,7 @@ def editarUsuario(request, id):
     return render(request, 'CRUDs/usuario/editarUsuario.html', data)
 
 
-@login_required
+@permission_required('is_superuser')
 def eliminarUsuario(request, id):
     usuario = get_object_or_404(User, id=id)
 
