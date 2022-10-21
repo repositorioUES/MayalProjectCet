@@ -33,6 +33,9 @@ urlpatterns = [
     path('administrador/guardarImagenes/<int:pk>/',GuardarImagenes, name='guardar_imagenes'),
     path('administrador/borrarImagen/<id>/',borrarImagen, name='borrar_imagen'),
 
+    #url para mostrar mapa de seguimiento
+    path('administrador/seguimiento/', seguimiento, name='seguimiento_producto'),  
+
     path('store/preguntasFrecuentes/', preguntas, name='faq'),
     path('store/terminosVS/', terminos, name='terminos'),
 
