@@ -22,4 +22,5 @@ urlpatterns = [
     path('', include('Mayal.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('paypal/',paypal,include('paypal.standard.ipn.urls')),
+    path("payments/",include("getpaid.urls")),
 ]

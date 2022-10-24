@@ -1,6 +1,5 @@
 from email.mime import image
 from multiprocessing import context
-
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
@@ -17,16 +16,101 @@ import datetime
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib import messages
 from django.shortcuts import render, redirect, render,get_object_or_404
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy,reverse
 from django.contrib import messages
 from django.http import HttpResponseRedirect,HttpResponse
-from django.views.generic import TemplateView
-from django.urls import reverse
-from django.views.generic import FormView,View
+from django.views.generic import TemplateView, RedirectView, FormView, View, CreateView
 from paypal.standard.forms import PayPalPaymentsForm
 from paypal.standard.models import ST_PP_COMPLETED
 from paypal.standard.ipn.signals import valid_ipn_received
+from django.views.generic.detail import DetailView
+from getpaid.forms import PaymentMethodForm
+from django import http
+import swapper
+from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 
+#Pagos con PayU.
+class CreatePaymentView(CreateView):
+    model = swapper.load_model("getpaid", "Payment")
+    form_class = PaymentMethodForm
+
+    def get(self, request, *args, **kwargs):
+        """
+        This view operates only on POST requests from order view where
+        you select payment method
+        """
+        return http.HttpResponseNotAllowed(["POST"])
+
+    def form_valid(self, form):
+        payment = form.save()
+        return payment.prepare_transaction(request=self.request, view=self)
+
+    def form_invalid(self, form):
+        return super().form_invalid(form)
+
+new_payment = CreatePaymentView.as_view()
+
+class FallbackView(RedirectView):
+    """
+    This view (in form of either SuccessView or FailureView) can be used as
+    general return view from paywall after completing/rejecting the payment.
+    Final url is returned by
+    :meth:`getpaid.models.AbstractPayment.get_return_redirect_url`
+    which allows for customization.
+    """
+
+    success = None
+    permanent = False
+
+    def get_redirect_url(self, *args, **kwargs):
+        Payment = swapper.load_model("getpaid", "Payment")
+        payment = get_object_or_404(Payment, pk=self.kwargs["pk"])
+
+        return payment.get_return_redirect_url(
+            request=self.request, success=self.success
+        )
+
+
+class SuccessView(FallbackView):
+    success = True
+
+success = SuccessView.as_view()
+
+
+class FailureView(FallbackView):
+    success = False
+
+failure = FailureView.as_view()
+
+
+class CallbackDetailView(View):
+    """
+    This view can be used if paywall supports
+    setting callback url with payment data.
+    The flow is then passed to
+    :meth:`getpaid.models.AbstractPayment.handle_paywall_callback`.
+    """
+
+    def post(self, request, pk, *args, **kwargs):
+        Payment = swapper.load_model("getpaid", "Payment")
+        payment = get_object_or_404(Payment, pk=pk)
+        return payment.handle_paywall_callback(request, *args, **kwargs)
+
+
+callback = csrf_exempt(CallbackDetailView.as_view())
+
+class OrderView(DetailView):
+    model = Order
+
+    def get_context_data(self, **kwargs):
+        context = super(OrderView, self).get_context_data(**kwargs)
+        context["payment_form"] = PaymentMethodForm(
+            initial={"order":self.object, "currency": self.object.currency}
+        )
+        return context
+
+#Pagos a través de Paypal.
 #@receiver(valid_ipn_received)
 def paypal_payment_received(sender, **kwargs):
     ipn_obj = sender
@@ -35,7 +119,7 @@ def paypal_payment_received(sender, **kwargs):
         # Check that the receiver email is the same we previously
         # set on the `business` field. (The user could tamper with
         # that fields on the payment form before it goes to PayPal)
-        if ipn_obj.receiver_email != 'your-paypal-business-address@example.com':
+        if ipn_obj.receiver_email != 'myeveryapp@gmail.com':
             # Not a valid payment
             return
 
@@ -66,8 +150,8 @@ class PaypalFormView(FormView):
             "item_name": 'Ratón',
             "invoice": 1234,
             "notify_url": self.request.build_absolute_uri(reverse('paypal')),
-            "return_url": self.request.build_absolute_uri(reverse('paypal_return')),
-            "cancel_return": self.request.build_absolute_uri(reverse('paypal')),
+            "return_url": self.request.build_absolute_uri(reverse('paypal-return')),
+            "cancel_return": self.request.build_absolute_uri(reverse('paypal-cancel')),
             "lc": 'SV',
             "no_shipping": '0',
         }
@@ -75,28 +159,25 @@ class PaypalFormView(FormView):
 class PaypalReturnView(TemplateView):
     template_name = 'paypal_success.html'
 
-def paypal_return(request):
-    context = {}
-    return render(request, 'paypal/paypal_success.html', context)
-
 class PaypalCancelView(TemplateView):
     template_name = 'paypal_cancel.html'
 
 
-# Create your views here.
+#Vista que muestra la pasarela de pago de PayPal.
 def paypal(request):
-    #return HttpResponse("Index");
     # Create the instance.
 
     paypal_dict = {
-        "business": "receiver_email@example.com",
-        "amount": "150.00",
-        "item_name": "name of the item",
-        "invoice": "unique-invoice-id",
-        "notify_url": request.build_absolute_uri(reverse('paypal')),
-        "return": request.build_absolute_uri(reverse('paypal')),
-        "cancel_return": request.build_absolute_uri(reverse('paypal')),
-        "custom": "premium_plan",  # Custom command to correlate to some function later (optional)
+            "business": 'myeveryapps@gmail.com',
+            "amount": 40,
+            "currency_code": "USD",
+            "item_name": 'Ratón',
+            "invoice": 1234,
+            "notify_url": request.build_absolute_uri(reverse('paypal')),
+            "return_url": request.build_absolute_uri(reverse('paypal-return')),
+            "cancel_return": request.build_absolute_uri(reverse('paypal-cancel')),
+            "lc": 'SV',
+            "no_shipping": '0',
     }
 
     form = PayPalPaymentsForm(initial=paypal_dict)

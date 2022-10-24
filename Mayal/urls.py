@@ -4,13 +4,36 @@ from django.views.static import serve
 from .views import *
 from .ajax import *
 from . import views
+from getpaid.registry import registry
 
 urlpatterns = [
     #Para los pagos de PayPal.
     path('paypal/',paypal,name="paypal"),
-    path('paypal_return/', views.PaypalReturnView.as_view(), name='paypal_return'),
+    path('paypal-return/', views.PaypalReturnView.as_view(), name='paypal-return'),
     path('paypal-cancel/', views.PaypalCancelView.as_view(), name='paypal-cancel'),
     #Fin de las vistas de pagos con PayPal.
+
+    #Para los pagos con PayU.
+    path("order/<int:pk>/", OrderView.as_view(), name="order_detail"),
+    #path("payments/new/",paymentsnew,name="paymentsnew"),
+    path("payments/new/", views.new_payment, name="create-payment"),
+
+    path(
+        "success/<uuid:pk>/",
+        views.success,
+        name="payment-success",
+    ),
+    path(
+        "failure/<uuid:pk>/",
+        views.failure,
+        name="payment-failure",
+    ),
+    path(
+        "callback/<uuid:pk>/",
+        views.callback,
+        name="callback",
+    ),
+    path("", include(registry.urls)),
 
     #Vistas del administrador.
     path('administrador/', index, name="index"),
