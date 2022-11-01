@@ -42,10 +42,12 @@
 			</div>
 			<br>
 			<div class="box-element hidden" id="payment-info">
-				<small>Metodos de pago</small>
+				<center><small>M&eacute;todos de pago</small></center>
+				<p>
 				<!--<button id="make-payment">Make payment</button>-->
 				<div id="paypal-button-container">
 					<a class="btn btn-primary btn-lg btn-block" href="{% url 'paypal' %}"><i class="fa-brands fa-paypal"></i> Paypal</a>
+					<p>
 
 					<!-- Mediante este formulario se hace la integracion de los pagos con tarjeta de credito y debito, usando la pasarela de PayU -->
 					<form method="post" action="https://merch-prod.snd.payu.com/api/v2_1/orders" target="_blank">
@@ -64,9 +66,10 @@
 					</form>
 					<!-- Fin del formulario para PayU -->
 
+					<p><p>
 					<a class="btn btn-warning btn-lg btn-block" href="#"><i class="fa-brands fa-btc"></i> Cryptos BTC & ETH</a>
 				</div>
-				</div>
+			</div>
 
 			</div>
 
