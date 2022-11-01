@@ -46,8 +46,24 @@
 				<!--<button id="make-payment">Make payment</button>-->
 				<div id="paypal-button-container">
 					<a class="btn btn-primary btn-lg btn-block" href="{% url 'paypal' %}"><i class="fa-brands fa-paypal"></i> Paypal</a>
-					<!-- <a class="btn btn-primary btn-lg btn-block" href="https://www.sandbox.paypal.com/webapps/hermes?token=0UF67839975663102&useraction=commit&mfid=1666585613339_622b870f77a1c"><i class="fa-brands fa-paypal"></i> Paypal</a> -->
-					<a class="btn btn-dark btn-lg btn-block" href="https://merch-prod.snd.payu.com/pay/?orderId=556CLRVMTN221024GUEST000P01&token=eyJhbGciOiJIUzI1NiJ9.eyJvcmRlcklkIjoiNTU2Q0xSVk1UTjIyMTAyNEdVRVNUMDAwUDAxIiwicG9zSWQiOiJvZzVIeTU5ZSIsImF1dGhvcml0aWVzIjpbIlJPTEVfQ0xJRU5UIl0sImV4cCI6MTY2NjY3MTg1MiwiaXNzIjoiUEFZVSIsImF1ZCI6ImFwaS1nYXRld2F5Iiwic3ViIjoiUGF5VSBzdWJqZWN0IiwianRpIjoiNTQ1MzZmMWEtMDE4Zi00M2JjLWE1OTAtMTk0ZWQxODZlNzhkIn0.QWcGddST2Md2dErhrnCAOpHHaFqibfw6yS3NVLCQeUs#/payment"><i class="fa-solid fa-credit-card"></i> PayU: Tarjeta de cr&eacute;dito/d&eacute;bito</a>
+
+					<!-- Mediante este formulario se hace la integracion de los pagos con tarjeta de credito y debito, usando la pasarela de PayU -->
+					<form method="post" action="https://merch-prod.snd.payu.com/api/v2_1/orders" target="_blank">
+						<input type="hidden" name="customerIp" value="123.123.123.123">
+						<input type="hidden" name="merchantPosId" value="300746">
+						<input type="hidden" name="description" value="Order description">
+						<input type="hidden" name="totalAmount" value="20000">
+						<input type="hidden" name="currencyCode" value="PLN">
+						<input type="hidden" name="buyer.language" value="en">
+						<input type="hidden" name="products[0].name" value="Product 1">
+						<input type="hidden" name="products[0].unitPrice" value="20000">
+						<input type="hidden" name="products[0].quantity" value="1">
+						<input type="hidden" name="continueUrl" value="https://developers.payu.com">
+						<input type="hidden" name="OpenPayu-Signature" value="sender=300746;algorithm=SHA-256;signature=4349c7a814c7d4caf40f5be4f0746c35f69094fccc0605a6b747dc621148f731">
+						<button type="submit" class="btn btn-dark btn-lg btn-block"><i class="fa-solid fa-credit-card"></i> PayU: Tarjeta de cr&eacute;dito/d&eacute;bito</button>
+					</form>
+					<!-- Fin del formulario para PayU -->
+
 					<a class="btn btn-warning btn-lg btn-block" href="#"><i class="fa-brands fa-btc"></i> Cryptos BTC & ETH</a>
 				</div>
 				</div>
