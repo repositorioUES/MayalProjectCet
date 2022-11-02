@@ -7,6 +7,10 @@ from . import views
 from getpaid.registry import registry
 
 urlpatterns = [
+    #Para los pagos con criptomoneda.
+    path('criptos/',criptos,name="criptos"),
+    #Fin de las vistas de pagos con BTC y ETH.
+
     #Para los pagos de PayPal.
     path('paypal/',paypal,name="paypal"),
     path('paypal-return/', views.PaypalReturnView.as_view(), name='paypal-return'),
@@ -15,9 +19,7 @@ urlpatterns = [
 
     #Para los pagos con PayU.
     path("order/<int:pk>/", OrderView.as_view(), name="order_detail"),
-    #path("payments/new/",paymentsnew,name="paymentsnew"),
     path("payments/new/", views.new_payment, name="create-payment"),
-
     path(
         "success/<uuid:pk>/",
         views.success,
@@ -34,6 +36,7 @@ urlpatterns = [
         name="callback",
     ),
     path("", include(registry.urls)),
+    #Fin de las vistas de pagos con tarjeta de crédito y débito.
 
     #Vistas del administrador.
     path('administrador/', index, name="index"),

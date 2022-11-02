@@ -109,6 +109,12 @@ class OrderView(DetailView):
             initial={"order":self.object, "currency": self.object.currency}
         )
         return context
+#Fin de los pagos mediante PayU.
+def criptos(request):
+    return render(request, "criptos/payCripto.html")
+#Para los pagos con criptomonedas.
+
+#Fin de los pagos con criptomonedas.
 
 #Pagos a través de Paypal.
 #@receiver(valid_ipn_received)

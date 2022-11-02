@@ -45,46 +45,49 @@
 				<center><small>M&eacute;todos de pago</small></center>
 				<p>
 				<!--<button id="make-payment">Make payment</button>-->
-				<div id="paypal-button-container">
-					
-					<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
-						<input type="hidden" name="cmd" value="_xclick" id="id_cmd">
-						<input type="hidden" name="charset" value="utf-8" id="id_charset">
-						<input type="hidden" name="currency_code" value="USD" id="id_currency_code">
-						<input type="hidden" name="no_shipping" value="0" id="id_no_shipping">
-						<input type="hidden" name="business" value="myeveryapps@gmail.com" id="id_business">
-						<input type="hidden" name="amount" value="40" id="id_amount">
-						<input type="hidden" name="item_name" value="Rat&oacute;n" id="id_item_name">
-						<input type="hidden" name="invoice" value="1234" id="id_invoice">
-						<input type="hidden" name="notify_url" value="http://127.0.0.1:8000/paypal/" id="id_notify_url">
-						<input type="hidden" name="cancel_return" value="http://127.0.0.1:8000/paypal-cancel/" id="id_cancel_return">
-						<input type="hidden" name="lc" value="SV" id="id_lc">
-						<input type="hidden" name="return" value="http://127.0.0.1:8000/paypal-return/" id="id_return">
-						<button type="submit" name="submit" class="btn btn-primary btn-lg btn-block"><i class="fa-brands fa-paypal"></i> Paypal</button>
-					</form>
+					<div id="paypal-button-container">
+						<!-- Mediante este formulario se hace la integracion de los pagos con Paypal, usando la pasarela oficial de Paypal para Django -->
+						<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+							<input type="hidden" name="cmd" value="_xclick" id="id_cmd">
+							<input type="hidden" name="charset" value="utf-8" id="id_charset">
+							<input type="hidden" name="currency_code" value="USD" id="id_currency_code">
+							<input type="hidden" name="no_shipping" value="0" id="id_no_shipping">
+							<input type="hidden" name="business" value="myeveryapps@gmail.com" id="id_business">
+							<input type="hidden" name="amount" value="40" id="id_amount">
+							<input type="hidden" name="item_name" value="Rat&oacute;n" id="id_item_name">
+							<input type="hidden" name="invoice" value="1234" id="id_invoice">
+							<input type="hidden" name="notify_url" value="http://127.0.0.1:8000/paypal/" id="id_notify_url">
+							<input type="hidden" name="cancel_return" value="http://127.0.0.1:8000/paypal-cancel/" id="id_cancel_return">
+							<input type="hidden" name="lc" value="SV" id="id_lc">
+							<input type="hidden" name="return" value="http://127.0.0.1:8000/paypal-return/" id="id_return">
+							<button type="submit" name="submit" class="btn btn-primary btn-lg btn-block"><i class="fa-brands fa-paypal"></i> Paypal</button>
+						</form>
+						<!-- Fin del formulario para PayPal -->
 
-					<p>
+						<!-- <a class="btn btn-primary btn-lg btn-block" href="{% url 'paypal' %}"><i class="fa-brands fa-paypal"></i> Paypal</a> -->
 
-					<!-- Mediante este formulario se hace la integracion de los pagos con tarjeta de credito y debito, usando la pasarela de PayU -->
-					<form method="post" action="https://merch-prod.snd.payu.com/api/v2_1/orders" target="_blank">
-						<input type="hidden" name="customerIp" value="123.123.123.123">
-						<input type="hidden" name="merchantPosId" value="300746">
-						<input type="hidden" name="description" value="Order description">
-						<input type="hidden" name="totalAmount" value="20000">
-						<input type="hidden" name="currencyCode" value="PLN">
-						<input type="hidden" name="buyer.language" value="en">
-						<input type="hidden" name="products[0].name" value="Product 1">
-						<input type="hidden" name="products[0].unitPrice" value="20000">
-						<input type="hidden" name="products[0].quantity" value="1">
-						<input type="hidden" name="continueUrl" value="https://developers.payu.com">
-						<input type="hidden" name="OpenPayu-Signature" value="sender=300746;algorithm=SHA-256;signature=4349c7a814c7d4caf40f5be4f0746c35f69094fccc0605a6b747dc621148f731">
-						<button type="submit" class="btn btn-dark btn-lg btn-block"><i class="fa-solid fa-credit-card"></i> PayU: Tarjeta de cr&eacute;dito/d&eacute;bito</button>
-					</form>
-					<!-- Fin del formulario para PayU -->
+						<p>
 
-					<p><p>
-					<a class="btn btn-warning btn-lg btn-block" href="#"><i class="fa-brands fa-btc"></i> Cryptos BTC & ETH</a>
-				</div>
+							<!-- Mediante este formulario se hace la integracion de los pagos con tarjeta de credito y debito, usando la pasarela de PayU -->
+							<form method="post" action="https://merch-prod.snd.payu.com/api/v2_1/orders" target="_blank">
+								<input type="hidden" name="customerIp" value="123.123.123.123">
+								<input type="hidden" name="merchantPosId" value="300746">
+								<input type="hidden" name="description" value="Order description">
+								<input type="hidden" name="totalAmount" value="20000">
+								<input type="hidden" name="currencyCode" value="PLN">
+								<input type="hidden" name="buyer.language" value="en">
+								<input type="hidden" name="products[0].name" value="Product 1">
+								<input type="hidden" name="products[0].unitPrice" value="20000">
+								<input type="hidden" name="products[0].quantity" value="1">
+								<input type="hidden" name="continueUrl" value="https://developers.payu.com">
+								<input type="hidden" name="OpenPayu-Signature" value="sender=300746;algorithm=SHA-256;signature=4349c7a814c7d4caf40f5be4f0746c35f69094fccc0605a6b747dc621148f731">
+								<button type="submit" class="btn btn-dark btn-lg btn-block"><i class="fa-solid fa-credit-card"></i> PayU: Tarjeta de cr&eacute;dito/d&eacute;bito</button>
+							</form>
+							<!-- Fin del formulario para PayU -->
+
+						<p><p>
+							<a class="btn btn-warning btn-lg btn-block" href="{% url 'criptos' %}"><i class="fa-brands fa-btc"></i> Cryptos BTC & ETH</a>
+					</div>
 			</div>
 
 			</div>

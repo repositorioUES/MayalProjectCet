@@ -1,0 +1,122 @@
+﻿{% extends 'tienda/main.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    #criptoCon {
+        display: inline-flex;
+        background-color: #E8E8DA;
+        border-color: black;
+        border-width: 0.5px;
+        border-style: solid;
+        padding: 5%;
+    }
+
+    #infoPay, #codeDir {
+        width: 400px;
+    }
+
+    #infoPay {
+        display:inline-block;
+    }
+
+    #barra {
+        width: 0.25%;
+        margin-left: 5%;
+        margin-right: 5%;
+        margin-bottom: -4%;
+        margin-top: -4%;
+        background-color: black;
+    }
+
+    izq{
+        float: left;
+    }
+
+    der{
+        float:right;
+    }
+
+    img {
+        width:80%;
+    }
+</style>
+
+<br>
+<center>
+    <div id="criptoCon">
+        <div id="infoPay">
+            <p>(Recibirá su factura vía correo electrónico)</p>
+            <p>
+                <izq>Pagar con:</izq>
+                <der><select id="moneda" onclick="cambiarPago();">
+                    <option value="eth">Ethereum (ETH)</option>
+                    <option value="btc">Bitcoin (BTC)</option>
+                </select></der>
+            </p><br><br>
+            <izq>Total:</izq>
+            <der>
+            <p class="eth">
+                0.0250 ETH ($40.00)
+            </p>
+            <p class="btc">
+                0.0020 BTC ($40.00)
+            </p></der><br><br>
+            <p>
+                <a href="#" style="text-decoration:none;">(Click aquí para más detalles)</a>
+            </p>
+        </div>
+        <div id="barra"></div>
+        <div id="codeDir">
+            <p>
+                <img class="btc" src="{% static 'images/btcDir.png' %}">
+                <img class="eth" src="{% static 'images/ethDir.png' %}">
+            </p>
+            <p class="btc">
+                14mMDjijyZcq3GuGPuixRhPBKBJciWpPgx
+            </p>
+            <p class="eth">
+                0x66797a51c38301fc294afac760fc4658dc5b5db5
+            </p>
+        </div>
+    </div>
+</center>
+
+<script type="text/javascript">
+    var btc = document.getElementsByClassName('btc');
+    var eth = document.getElementsByClassName('eth');
+    var moneda = document.getElementById('moneda');
+
+    for (var i = 0; i < btc.length; i++) {
+        btc[i].style.display = "none";
+    }
+    for (var i = 0; i < eth.length; i++) {
+        eth[i].style.display = "block";
+    }
+
+    function cambiarPago() {
+        var cripto = moneda.options[moneda.selectedIndex].value;
+
+        switch (cripto) {
+            case "eth":
+                for (var i = 0; i < btc.length; i++) {
+                    btc[i].style.display = "none";
+                }
+                for (var i = 0; i < eth.length; i++) {
+                    eth[i].style.display = "block";
+                }
+                break;
+            case "btc":
+                for (var i = 0; i < btc.length; i++) {
+                    btc[i].style.display = "block";
+                }
+                for (var i = 0; i < eth.length; i++) {
+                    eth[i].style.display = "none";
+                }
+                break;
+        }
+
+    }
+</script>
+
+{% endblock content %}
