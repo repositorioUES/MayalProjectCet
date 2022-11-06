@@ -130,3 +130,6 @@ dmypy.json
 
 #Visual Studio 2019
 .vs/
+
+#Base de prueba
+db1.sqlite3

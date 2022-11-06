@@ -1,0 +1,6 @@
+<h2>Elige el m&eacute;todo de pago</h2>
+<form action="{% url 'getpaid:create-payment' %}" method="POST">
+    {% csrf_token %}
+    {{ payment_form.as_p }}
+    <input type="submit" value="Seleccionar m&eacute;todo">
+</form>

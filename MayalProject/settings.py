@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'crispy_forms',
     'django_social_share',
     'paypal.standard.ipn',
+    "getpaid",
+    "getpaid_payu",
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -137,3 +139,26 @@ STATICFILES_DIRS=[
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+#Modelo para manejar los pedidos.
+DEFAULT_CURRENCY="USD"
+GETPAID_ORDER_MODEL = "Mayal.Order"
+
+#Configuración del Plugin de Pago.
+GETPAID = {
+    "BACKENDS":{
+        "getpaid_payu": {   # dotted import path of the plugin
+            # refer to backend docs and take these from your merchant panel:
+            
+            "pos_id": 145227,
+            "second_key": "13a980d4f851f3d9a1cfc792fb1f5e50",
+            "client_id": 145227,
+            "client_secret": "12f071174cb7eb79d4aac5bc2f07563f",
+        },
+
+        # this plugin is meant only for testing purposes
+        "getpaid.backends.dummy": {
+            "confirmation_method": "push",
+        },
+    }
+}
