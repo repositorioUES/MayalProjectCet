@@ -47,7 +47,7 @@
                                     &nbsp;
                                     <a class="btn btn-warning" href="{% url 'modificar_producto' p.id %}"><i class="fa fa-pencil fa-2x" aria-hidden="true" style="font-size:22px;color:rgb(255, 255, 255);text-shadow:2px 2px 4px #000000;"></i></a>&nbsp;&nbsp;
                                     <a class="btn btn-danger"href="#" onclick="eliminarProducto({{ p.id }})"><i class="fa fa-trash fa-2x" aria-hidden="true" style="font-size:22px;color:rgb(255, 255, 255);text-shadow:2px 2px 4px #000000;"></i></a>
-                                    <a class="btn btn-primary" href="{% url 'seguimiento_producto' %}"><i class="fa fa-eye fa-2x" aria-hidden="true" style="font-size:22px;color:rgb(255, 255, 255);text-shadow:2px 2px 4px #000000;"></i></a>&nbsp;&nbsp;
+                                    <a class="btn btn-primary" href="{% url 'detalle_producto' p.id %}"><i class="fa fa-eye fa-2x" aria-hidden="true" style="font-size:22px;color:rgb(255, 255, 255);text-shadow:2px 2px 4px #000000;"></i></a>&nbsp;&nbsp;
                                 </td>
                             </tr>
                             {% endfor %}

@@ -1,0 +1,78 @@
+{% extends 'tienda/main.html' %}
+
+{% block content %}
+
+<div>
+    <h3>Seguimiento de la Entrega</h3>
+</div>
+
+<br>
+
+<div class="row">
+    <div class="col">
+        <div class="card card-body">
+            <div id='map' style='width: 1000px; height: 400px; margin:0px auto;'></div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    let timer = 2; // Tiempo en segundos para mover el marcador
+    let offset = 0.000050; // La cantidad que se le sumará a la posición del marcador para moverse
+
+    // Se puede cambiar estos valores para poner el punto inical desde donde empezará el Seguimiento
+    let long = -88.9167000; // Longitud inical (X)
+    let lat = 13.8333000; // Latitud inicial (Y)
+    
+    setInterval(function(){ // Funcion encargada de repetir
+        ponerMarca();
+    }, 1000 * timer);
+
+    
+    
+    mapboxgl.accessToken = 'pk.eyJ1Ijoia3JpejEwOTEiLCJhIjoiY2tyaTBtazYyMGkxaTMwcGUzb2s5cjRpZyJ9.C5B7uLancPuRuJRZqaa-Dw';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [-88.9167000, 13.8333000],
+        zoom: 7.60
+    });
+    
+    map.addControl(new mapboxgl.NavigationControl());
+        
+        var marker = new mapboxgl.Marker({
+            color: "#FF0000"
+        }).setLngLat([-88.9167000, 13.8333000])
+        .setPopup(new mapboxgl.Popup().setHTML("Lugar"))
+        .addTo(map);
+
+    function ponerMarca() {
+        var rand = (Math.floor(Math.random() * 4));
+
+        switch(rand){
+            case 0:
+                long += offset;
+                lat += offset;
+                break;
+            case 1:
+                long += offset;
+                lat -= offset;
+                break;
+            case 2:
+                long += offset;
+                lat -= offset;
+                break;
+            case 3:
+                long += offset;
+                lat += offset;
+                break;
+        }
+        console.log("Longitud: " + long.toFixed(7).toString() + "Latitud: " + lat.toFixed(7).toString());
+        
+        marker.setLngLat([long.toFixed(7), lat.toFixed(7)])
+        .addTo(map);
+    }
+</script>
+
+{% endblock content %}

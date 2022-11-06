@@ -1,0 +1,65 @@
+{% extends 'administrador/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}<title>Detalle Producto</title>{% endblock title%}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center" width="300">
+        <div class="col-lg-9">
+            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                <div class="card-header"><h3 class="text-center font-weight-light my-4">Información del producto: {{ producto }}</h3>
+                    <table>
+                        <tr>
+                            <td width="350">
+                                <div align="center">
+                                    <img src=" {{ producto.imagen.url }}" width="250" height="auto"/>
+                                    <label><b>Imágen principal del producto</b></label>
+                                </div>
+                            </td>
+                            <td width="400">
+                                <label><b>Nombre: </b> {{producto.nombreProd}}</label><br><br>
+
+                                <label><b>Categoría: </b> {{producto.categoria}}</label><br>
+                                <label><b>Subcategoría: </b> {{producto.subCategoria}}</label><br>
+                                <label><b>Precio: </b> ${{producto.precio}}</label><br><br>
+
+                                <label><b>Coleccion: </b>  {% if producto.coleccion != None %}  {{producto.coleccion}} {% else %}   -- {% endif %}</label><br>
+                                <label><b>Material: </b> {% if producto.material != None %}  {{producto.material}} {% else %}    -- {% endif %}</label><br>
+                                <label><b>Existencias: </b> {% if producto.existencias != None %} {{producto.existencias}} {% else %}   -- {% endif %}</label><br>
+                                
+                            </td>
+                            <td align="center">
+                                <a class="btn btn-danger" href="{% url 'listar_productos' %}"><i class="fa fa-arrow-left" aria-hidden="true"></i> Regresar</a><br><br>
+
+                                <a class="btn btn-primary" href="{% url 'agregar_imagenes' producto.id %}" style="size:5px"><i class="fa fa-plus" aria-hidden="true"></i> Imágenes</a><br><br>
+                                    
+                                <a class="btn btn-warning" href="{% url 'modificar_producto' producto.id %}"><i class="fa fa-pencil fa-2x" aria-hidden="true" style="font-size:22px;color:rgb(255, 255, 255);text-shadow:2px 2px 4px #000000;"></i>  Editar</a>
+                            </td>
+                            
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="card-body">
+                    <div class="row" align="center">
+                        <label><b>Imagenes asociadas a éste producto</b></label><br><br>
+                        {% if imagenesProducto %}
+                            {% for ip in imagenesProducto %}
+                                <div class="col-lg-4" >
+                                    <img class="thumbnail" width="300" height="auto"  align="center" src="{{ip.imagen.url}}">
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <label>Aún no hay Imagenes asociadas a éste producto</label><br><br>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

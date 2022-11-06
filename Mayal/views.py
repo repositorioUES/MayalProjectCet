@@ -427,3 +427,18 @@ def seguimiento(request):
     html = open(os.path.dirname(os.path.realpath(__file__))  + '\miMapa.html', "r")   
     
     return HttpResponse(html.read())
+
+
+# SEGUIMIENTO DE ENTREGA ( simulado XD ) ------------------------------------------------------------------------
+def tracking(request):
+    context={}
+    return render(request,'Otros/seguimiento.html', context)
+
+# DETALLE DE LA INFO E IMAGENES DE CADA PRODUCTO----------------------------------------------------------------------------------
+@permission_required('is_superuser')
+def detalleProducto(request, pk):
+    producto = get_object_or_404(Producto, id = pk)
+    imagenesProducto = ImagenProducto.objects.filter(producto_id = pk)
+
+    return render(request,'CRUDs/Producto/detalle.html', {'producto':producto,'imagenesProducto': imagenesProducto})
+
