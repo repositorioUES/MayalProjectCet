@@ -1,0 +1,86 @@
+{% extends 'administrador/base.html' %}
+{% load static %}
+
+{% block title %}<title>Ver Orden</title>{% endblock title%}
+
+{% block content %}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4"></h1>
+</div>
+
+<!-- Seccion Tablas-->
+
+<div class="card mb-4">
+
+    <div class="card-header">
+        <i class="fas fa-table me-1"></i>Listado de Orden : {{ user.first_name}} {{ user.last_name}}
+    </div>&nbsp;
+    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <div class="row">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">Número de productos: {{ productos }}</div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">Total pedido: ${{ordenes.get_cart_total|floatformat:2}}</div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-warning text-white mb-4">
+                <div class="card-body"> Seguimiento <a class="text-white stretched-link" href="{% url 'seguimiento_entrega'  %}">Ver detalles</a></div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+    <div class="card-body">
+        <table id="datatablesSimple">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ordenesItem in ordenesItems %}
+                <tr>
+                    <td align="center" width="150"> <img src="{{ ordenesItem.product.imagen.url}}" width="60" height="auto"/> </td>
+                    <td>{{ ordenesItem.product }}</td>
+                    <td>${{ ordenesItem.product.precio }}</td>
+                    <td>{{ ordenesItem.quantity }}</td>
+                    
+                </tr>
+                
+                {%endfor%}
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- Fin Seccion tablas-->
+
+{% endblock content%}
+
+{% block js %}
+    <!--<script>
+        function eliminarUsuario(id){
+            Swal.fire({
+                title: 'Estas seguro?',
+                showCancelButton: true,
+                confirmButtonText: 'Si, Eliminar',
+                confirmButtonColor: '#FF0000',
+                cancelButtonText: 'No, Cancelar',
+                reverseButtons: true,
+
+            }).then(function(result) {
+                if (result.isConfirmed) {
+                    window.location.href = "eliminarUsuario/"+id+"/"
+                }
+            })
+        }
+    </script>-->
+{% endblock  %}

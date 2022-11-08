@@ -12,9 +12,9 @@
                         <div class="sb-nav-link-icon"><i class="fa fa-users"></i></div>
                         Usuarios
                     </a>
-                    <a class="nav-link" href="{% url 'store' %}">
+                    <a class="nav-link" href="{% url 'listarOrdenes' %}">
                         <div class="sb-nav-link-icon"><i class="fa fa-shopping-bag"></i></div>
-                        Tienda
+                        Ordenes
                     </a>
                     <div class="sb-sidenav-menu-heading">Mantenimiento</div>
                     <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
@@ -76,6 +76,11 @@
                         Tables
                     </a>
                     {% endcomment %}
+                    <div class="sb-sidenav-menu-heading">Tienda</div>
+                    <a class="nav-link" href="{% url 'store' %}">
+                        <div class="sb-nav-link-icon"><i class="fa fa-shopping-bag"></i></div>
+                        Tienda
+                    </a>
                 </div>
 
             </div>

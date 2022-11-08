@@ -13,6 +13,7 @@ from .utils import cookieCart, cartData, guestOrder
 from django.http import JsonResponse
 import json
 import datetime
+from django.db.models import Sum
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib import messages
 from django.shortcuts import render, redirect, render,get_object_or_404
@@ -449,10 +450,31 @@ def listarUsuario(request):
         'usuarios': usuarios,
     }
 
-
     return render(request, 'CRUDs/usuario/listarUsuario.html', data)
 
+@permission_required('is_superuser')
+def listarOrdenes(request):
+    ordenes = Order.objects.all()
+    data = {
+        'ordenes': ordenes,
+    }
 
+    return render(request, 'administrador/listaOrdenes.html', data)
+
+@permission_required('is_superuser')
+def listarOrdenesProductos(request,id):
+    ordenes = Order.objects.get(id=id)
+    ordenesItems = ordenes.orderitem_set.all()
+    productos = ordenes.orderitem_set.all().count()
+
+    data = {
+        'ordenes': ordenes,
+        'ordenesItems': ordenesItems,
+        'productos': productos,
+
+    }
+
+    return render(request, 'administrador/listarOrdenesProductos.html', data)
 
 @permission_required('is_superuser')
 def editarUsuario(request, id):

@@ -14,7 +14,9 @@ class Order(AbstractOrder):
     description = models.CharField(max_length=128, default='Order from mystore')
     total = models.DecimalField(decimal_places=2, max_digits=8, default="199.99")
     currency = models.CharField(max_length=3, default=settings.DEFAULT_CURRENCY)
-
+    ESTADO = (('Activa','Activa'),('Inactiva', 'Inactiva'))
+    estado = models.CharField(max_length=10, choices=ESTADO, default="Activa")
+    
     def get_user_info(self):
         return {"email": self.user.email}
 

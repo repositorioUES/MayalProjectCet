@@ -1,0 +1,67 @@
+{% extends 'administrador/base.html' %}
+{% load static %}
+
+{% block title %}<title>Listado de Ordenes</title>{% endblock title%}
+
+{% block content %}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4"></h1>
+</div>
+<!-- Seccion Tablas-->
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-table me-1"></i>Listado de Ordenes
+    </div>&nbsp;
+
+    <div class="card-body">
+        <table id="datatablesSimple">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nombres</th>
+                    <th>Correo</th>
+                    <th>Fecha de orden</th>
+                    <th>Estado</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for orden in ordenes %}
+                <tr>
+                    <td  style="text-align: center;"><a class="btn btn-sm btn-dark" href="{% url 'listarOrdenesProductos' orden.id %}"> <i class="fa fa-shopping-bag" aria-hidden="true"></i> Ver</a></td>
+                    <td>{{ orden.user.first_name }} {{ orden.user.last_name }}</td>
+                    <td>{{ orden.user.email }}</td>
+                    <td>{{ orden.date_ordered }}</td>
+                    <td>{{ orden.estado }}</td>
+                    <td>${{ orden.get_cart_total|floatformat:2}}</td>
+
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- Fin Seccion tablas-->
+
+{% endblock content%}
+
+{% block js %}
+    <!--<script>
+        function eliminarUsuario(id){
+            Swal.fire({
+                title: 'Estas seguro?',
+                showCancelButton: true,
+                confirmButtonText: 'Si, Eliminar',
+                confirmButtonColor: '#FF0000',
+                cancelButtonText: 'No, Cancelar',
+                reverseButtons: true,
+
+            }).then(function(result) {
+                if (result.isConfirmed) {
+                    window.location.href = "eliminarUsuario/"+id+"/"
+                }
+            })
+        }
+    </script>-->
+{% endblock  %}
