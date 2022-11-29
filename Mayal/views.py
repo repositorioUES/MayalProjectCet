@@ -30,89 +30,90 @@ from django import http
 import swapper
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
+from .filters import *
 
 #Pagos con PayU.
 class CreatePaymentView(CreateView):
-    model = swapper.load_model("getpaid", "Payment")
-    form_class = PaymentMethodForm
+	model = swapper.load_model("getpaid", "Payment")
+	form_class = PaymentMethodForm
 
-    def get(self, request, *args, **kwargs):
-        """
-        This view operates only on POST requests from order view where
-        you select payment method
-        """
-        return http.HttpResponseNotAllowed(["POST"])
+	def get(self, request, *args, **kwargs):
+		"""
+		This view operates only on POST requests from order view where
+		you select payment method
+		"""
+		return http.HttpResponseNotAllowed(["POST"])
 
-    def form_valid(self, form):
-        payment = form.save()
-        return payment.prepare_transaction(request=self.request, view=self)
+	def form_valid(self, form):
+		payment = form.save()
+		return payment.prepare_transaction(request=self.request, view=self)
 
-    def form_invalid(self, form):
-        return super().form_invalid(form)
+	def form_invalid(self, form):
+		return super().form_invalid(form)
 
 new_payment = CreatePaymentView.as_view()
 
 class FallbackView(RedirectView):
-    """
-    This view (in form of either SuccessView or FailureView) can be used as
-    general return view from paywall after completing/rejecting the payment.
-    Final url is returned by
-    :meth:`getpaid.models.AbstractPayment.get_return_redirect_url`
-    which allows for customization.
-    """
+	"""
+	This view (in form of either SuccessView or FailureView) can be used as
+	general return view from paywall after completing/rejecting the payment.
+	Final url is returned by
+	:meth:`getpaid.models.AbstractPayment.get_return_redirect_url`
+	which allows for customization.
+	"""
 
-    success = None
-    permanent = False
+	success = None
+	permanent = False
 
-    def get_redirect_url(self, *args, **kwargs):
-        Payment = swapper.load_model("getpaid", "Payment")
-        payment = get_object_or_404(Payment, pk=self.kwargs["pk"])
+	def get_redirect_url(self, *args, **kwargs):
+		Payment = swapper.load_model("getpaid", "Payment")
+		payment = get_object_or_404(Payment, pk=self.kwargs["pk"])
 
-        return payment.get_return_redirect_url(
-            request=self.request, success=self.success
-        )
+		return payment.get_return_redirect_url(
+			request=self.request, success=self.success
+		)
 
 
 class SuccessView(FallbackView):
-    success = True
+	success = True
 
 success = SuccessView.as_view()
 
 
 class FailureView(FallbackView):
-    success = False
+	success = False
 
 failure = FailureView.as_view()
 
 
 class CallbackDetailView(View):
-    """
-    This view can be used if paywall supports
-    setting callback url with payment data.
-    The flow is then passed to
-    :meth:`getpaid.models.AbstractPayment.handle_paywall_callback`.
-    """
+	"""
+	This view can be used if paywall supports
+	setting callback url with payment data.
+	The flow is then passed to
+	:meth:`getpaid.models.AbstractPayment.handle_paywall_callback`.
+	"""
 
-    def post(self, request, pk, *args, **kwargs):
-        Payment = swapper.load_model("getpaid", "Payment")
-        payment = get_object_or_404(Payment, pk=pk)
-        return payment.handle_paywall_callback(request, *args, **kwargs)
+	def post(self, request, pk, *args, **kwargs):
+		Payment = swapper.load_model("getpaid", "Payment")
+		payment = get_object_or_404(Payment, pk=pk)
+		return payment.handle_paywall_callback(request, *args, **kwargs)
 
 
 callback = csrf_exempt(CallbackDetailView.as_view())
 
 class OrderView(DetailView):
-    model = Order
+	model = Order
 
-    def get_context_data(self, **kwargs):
-        context = super(OrderView, self).get_context_data(**kwargs)
-        context["payment_form"] = PaymentMethodForm(
-            initial={"order":self.object, "currency": self.object.currency}
-        )
-        return context
+	def get_context_data(self, **kwargs):
+		context = super(OrderView, self).get_context_data(**kwargs)
+		context["payment_form"] = PaymentMethodForm(
+			initial={"order":self.object, "currency": self.object.currency}
+		)
+		return context
 #Fin de los pagos mediante PayU.
 def criptos(request):
-    return render(request, "criptos/payCripto.html")
+	return render(request, "criptos/payCripto.html")
 #Para los pagos con criptomonedas.
 
 #Fin de los pagos con criptomonedas.
@@ -120,204 +121,204 @@ def criptos(request):
 #Pagos a través de Paypal.
 #@receiver(valid_ipn_received)
 def paypal_payment_received(sender, **kwargs):
-    ipn_obj = sender
-    if ipn_obj.payment_status == ST_PP_COMPLETED:
-        # WARNING !
-        # Check that the receiver email is the same we previously
-        # set on the `business` field. (The user could tamper with
-        # that fields on the payment form before it goes to PayPal)
-        if ipn_obj.receiver_email != 'myeveryapp@gmail.com':
-            # Not a valid payment
-            return
+	ipn_obj = sender
+	if ipn_obj.payment_status == ST_PP_COMPLETED:
+		# WARNING !
+		# Check that the receiver email is the same we previously
+		# set on the `business` field. (The user could tamper with
+		# that fields on the payment form before it goes to PayPal)
+		if ipn_obj.receiver_email != 'myeveryapp@gmail.com':
+			# Not a valid payment
+			return
 
-        # ALSO: for the same reason, you need to check the amount
-        # received, `custom` etc. are all what you expect or what
-        # is allowed.
-        try:
-            my_pk = ipn_obj.invoice
-            mytransaction = MyTransaction.objects.get(pk=my_pk)
-            assert ipn_obj.mc_gross == mytransaction.amount and ipn_obj.mc_currency == 'USD'
-        except Exception:
-            logger.exception('Paypal ipn_obj data not valid!')
-        else:
-            mytransaction.paid = True
-            mytransaction.save()
-    else:
-        logger.debug('Paypal payment status not completed: %s' % ipn_obj.payment_status)
+		# ALSO: for the same reason, you need to check the amount
+		# received, `custom` etc. are all what you expect or what
+		# is allowed.
+		try:
+			my_pk = ipn_obj.invoice
+			mytransaction = MyTransaction.objects.get(pk=my_pk)
+			assert ipn_obj.mc_gross == mytransaction.amount and ipn_obj.mc_currency == 'USD'
+		except Exception:
+			logger.exception('Paypal ipn_obj data not valid!')
+		else:
+			mytransaction.paid = True
+			mytransaction.save()
+	else:
+		logger.debug('Paypal payment status not completed: %s' % ipn_obj.payment_status)
 
 class PaypalFormView(FormView):
-    template_name = 'paypal_form.html'
-    form_class = PayPalPaymentsForm
+	template_name = 'paypal_form.html'
+	form_class = PayPalPaymentsForm
 
-    def get_initial(self):
-        return {
-            "business": 'myeveryapps@gmail.com',
-            "amount": 40,
-            "currency_code": "USD",
-            "item_name": 'Ratón',
-            "invoice": 1234,
-            "notify_url": self.request.build_absolute_uri(reverse('paypal')),
-            "return_url": self.request.build_absolute_uri(reverse('paypal-return')),
-            "cancel_return": self.request.build_absolute_uri(reverse('paypal-cancel')),
-            "lc": 'SV',
-            "no_shipping": '0',
-        }
+	def get_initial(self):
+		return {
+			"business": 'myeveryapps@gmail.com',
+			"amount": 40,
+			"currency_code": "USD",
+			"item_name": 'Ratón',
+			"invoice": 1234,
+			"notify_url": self.request.build_absolute_uri(reverse('paypal')),
+			"return_url": self.request.build_absolute_uri(reverse('paypal-return')),
+			"cancel_return": self.request.build_absolute_uri(reverse('paypal-cancel')),
+			"lc": 'SV',
+			"no_shipping": '0',
+		}
 
 class PaypalReturnView(TemplateView):
-    template_name = 'paypal_success.html'
+	template_name = 'paypal_success.html'
 
 class PaypalCancelView(TemplateView):
-    template_name = 'paypal_cancel.html'
+	template_name = 'paypal_cancel.html'
 
 
 #Vista que muestra la pasarela de pago de PayPal.
 def paypal(request):
-    # Create the instance.
+	# Create the instance.
 
-    paypal_dict = {
-            "business": 'myeveryapps@gmail.com',
-            "amount": 40,
-            "currency_code": "USD",
-            "item_name": 'Ratón',
-            "invoice": 1234,
-            "notify_url": request.build_absolute_uri(reverse('paypal')),
-            "return_url": request.build_absolute_uri(reverse('paypal-return')),
-            "cancel_return": request.build_absolute_uri(reverse('paypal-cancel')),
-            "lc": 'SV',
-            "no_shipping": '0',
-    }
+	paypal_dict = {
+			"business": 'myeveryapps@gmail.com',
+			"amount": 40,
+			"currency_code": "USD",
+			"item_name": 'Ratón',
+			"invoice": 1234,
+			"notify_url": request.build_absolute_uri(reverse('paypal')),
+			"return_url": request.build_absolute_uri(reverse('paypal-return')),
+			"cancel_return": request.build_absolute_uri(reverse('paypal-cancel')),
+			"lc": 'SV',
+			"no_shipping": '0',
+	}
 
-    form = PayPalPaymentsForm(initial=paypal_dict)
-    context = {"form": form}
-    return render(request, "paypal/paypal_form.html", context)
+	form = PayPalPaymentsForm(initial=paypal_dict)
+	context = {"form": form}
+	return render(request, "paypal/paypal_form.html", context)
 
 class SuperUserCheck(UserPassesTestMixin, View):
-    def test_func(self):
-        return self.request.user.is_superuser
+	def test_func(self):
+		return self.request.user.is_superuser
 
 
 # Create your views here.
 @permission_required('is_superuser')
 def index(request):
-    context = {}
-    return render(request, 'administrador/base.html', context)
+	context = {}
+	return render(request, 'administrador/base.html', context)
 
 
 # CRUD ------ CATEGORIA------------------------------------------------------------------------------------
 @permission_required('is_superuser')
 def ListadosCatSubcat(request):
-    categorias = Categoria.objects.all().order_by('nombreCat')
-    subcategorias = Subcategoria.objects.all().order_by('categoria')
+	categorias = Categoria.objects.all().order_by('nombreCat')
+	subcategorias = Subcategoria.objects.all().order_by('categoria')
 
-    return render(request,'CRUDs/Categoria/lista.html', {'categorias' : categorias, 'subcategorias' : subcategorias})
+	return render(request,'CRUDs/Categoria/lista.html', {'categorias' : categorias, 'subcategorias' : subcategorias})
 
 class CrearCategoria(SuperUserCheck,CreateView):
-    model = Categoria
-    template_name = 'CRUDs/Categoria/crear.html'
-    form_class = CategoriaForm
-    success_url = reverse_lazy('listar_categorias')
+	model = Categoria
+	template_name = 'CRUDs/Categoria/crear.html'
+	form_class = CategoriaForm
+	success_url = reverse_lazy('listar_categorias')
 
 class ModificarCategoria(SuperUserCheck,UpdateView):
-    model = Categoria
-    template_name = 'CRUDs/Categoria/crear.html'
-    form_class = CategoriaForm
-    success_url = reverse_lazy('listar_categorias')
+	model = Categoria
+	template_name = 'CRUDs/Categoria/crear.html'
+	form_class = CategoriaForm
+	success_url = reverse_lazy('listar_categorias')
 
 @permission_required('is_superuser')
 def borrarCategoria(request, id):
-    categoria = get_object_or_404(Categoria, id=id)
+	categoria = get_object_or_404(Categoria, id=id)
 
-    categoria.delete()
-    messages.success(request, " Categoria eliminada correctamente")
-    return redirect(to="listar_categorias")
+	categoria.delete()
+	messages.success(request, " Categoria eliminada correctamente")
+	return redirect(to="listar_categorias")
 
 # CRUD ------ SUBCATEGORIA----------------------------------------------------------------------------------
 
 class CrearSubcategoria(SuperUserCheck,CreateView):
-    model = Subcategoria
-    template_name = 'CRUDs/Subcategoria/crear.html'
-    form_class = SubcategoriaForm
-    success_url = reverse_lazy('listar_categorias')
+	model = Subcategoria
+	template_name = 'CRUDs/Subcategoria/crear.html'
+	form_class = SubcategoriaForm
+	success_url = reverse_lazy('listar_categorias')
 
 class ModificarSubcategoria(SuperUserCheck,UpdateView):
-    model = Subcategoria
-    template_name = 'CRUDs/Subcategoria/crear.html'
-    form_class = SubcategoriaForm
-    success_url = reverse_lazy('listar_categorias')
+	model = Subcategoria
+	template_name = 'CRUDs/Subcategoria/crear.html'
+	form_class = SubcategoriaForm
+	success_url = reverse_lazy('listar_categorias')
 
 @permission_required('is_superuser')
 def borrarSubcategoria(request, id):
-    subcategoria = get_object_or_404(Subcategoria, id=id)
+	subcategoria = get_object_or_404(Subcategoria, id=id)
 
-    subcategoria.delete()
-    messages.success(request, " Subcategoria eliminada correctamente")
+	subcategoria.delete()
+	messages.success(request, " Subcategoria eliminada correctamente")
 
-    return redirect(to="listar_categorias")
+	return redirect(to="listar_categorias")
 
 # CRUD ------ PRODUCTO----------------------------------------------------------------------------------
 
 
 class ListadoProducto(SuperUserCheck,ListView):
-    model = Producto
-    template_name = 'CRUDs/Producto//lista.html'
-    context_object_name = 'productos'
+	model = Producto
+	template_name = 'CRUDs/Producto//lista.html'
+	context_object_name = 'productos'
 
 
 class CrearProducto(SuperUserCheck,CreateView):
-    model = Producto
-    template_name = 'CRUDs/Producto/crear.html'
-    form_class = ProductoForm
-    success_url = reverse_lazy('listar_productos')
+	model = Producto
+	template_name = 'CRUDs/Producto/crear.html'
+	form_class = ProductoForm
+	success_url = reverse_lazy('listar_productos')
 
 class ModificarProducto(SuperUserCheck,UpdateView):
-    model = Producto
-    template_name = 'CRUDs/Producto/editar.html'
-    form_class = ProductoForm
-    success_url = reverse_lazy('listar_productos')
-    
+	model = Producto
+	template_name = 'CRUDs/Producto/editar.html'
+	form_class = ProductoForm
+	success_url = reverse_lazy('listar_productos')
+	
 @permission_required('is_superuser')
 def borrarProducto(request, id):
-    producto = get_object_or_404(Producto, id=id)
+	producto = get_object_or_404(Producto, id=id)
 
-    producto.delete()
-    messages.success(request, " Producto eliminado correctamente")
+	producto.delete()
+	messages.success(request, " Producto eliminado correctamente")
 
-    return redirect(to="listar_productos")
+	return redirect(to="listar_productos")
 
 # CONTROL DE LAS IMAGENES DE CADA PRODUCTO----------------------------------------------------------------------------------
 @permission_required('is_superuser')
 def AgregarImagenes(request, pk):
-    producto = get_object_or_404(Producto, id = pk)
-    imagenesProducto = ImagenProducto.objects.filter(producto_id = pk)
+	producto = get_object_or_404(Producto, id = pk)
+	imagenesProducto = ImagenProducto.objects.filter(producto_id = pk)
 
-    return render(request,'CRUDs/Producto/agregarImagenes.html', {'producto':producto,'imagenesProducto': imagenesProducto})
+	return render(request,'CRUDs/Producto/agregarImagenes.html', {'producto':producto,'imagenesProducto': imagenesProducto})
 @permission_required('is_superuser')
 def GuardarImagenes(request, pk):
-    producto = get_object_or_404(Producto, id = pk)
+	producto = get_object_or_404(Producto, id = pk)
 
-    if request.method == 'POST':
-        data = request.POST
-        imagenes = request.FILES.getlist('imagenes')
+	if request.method == 'POST':
+		data = request.POST
+		imagenes = request.FILES.getlist('imagenes')
 
-        for i in imagenes:
-            imagenProducto = ImagenProducto.objects.create(
-                producto_id = producto.id,
-                imagen = i,
-            )
+		for i in imagenes:
+			imagenProducto = ImagenProducto.objects.create(
+				producto_id = producto.id,
+				imagen = i,
+			)
 
-        return HttpResponseRedirect('/administrador/agregarImagenes/' + str(producto.id) +'/')
-            
-    return render(request,'CRUDs/Producto/agregarImagenes.html', {'producto':producto})
+		return HttpResponseRedirect('/administrador/agregarImagenes/' + str(producto.id) +'/')
+			
+	return render(request,'CRUDs/Producto/agregarImagenes.html', {'producto':producto})
 
 @permission_required('is_superuser')
 def borrarImagen(request, id):
-    imagenProducto = get_object_or_404(ImagenProducto, id=id)
-    producto = get_object_or_404(Producto, id = imagenProducto.producto_id)
+	imagenProducto = get_object_or_404(ImagenProducto, id=id)
+	producto = get_object_or_404(Producto, id = imagenProducto.producto_id)
 
-    imagenProducto.delete()
-    messages.success(request, " Imagen eliminada correctamente")
+	imagenProducto.delete()
+	messages.success(request, " Imagen eliminada correctamente")
 
-    return HttpResponseRedirect('/administrador/agregarImagenes/' + str(producto.id) +'/')
+	return HttpResponseRedirect('/administrador/agregarImagenes/' + str(producto.id) +'/')
 
 
 # INICIO DE TIENDA----------------------------------------------------------------------------------
@@ -330,7 +331,10 @@ def store(request):
 	items = data['items']
 
 	products = Producto.objects.all()
-	context = {'products':products, 'cartItems':cartItems}
+	filter = ProductoFilter(request.GET, queryset=products)
+	products = filter.qs
+
+	context = {'products':products, 'cartItems':cartItems, 'filter' : filter,}
 	return render(request, 'tienda/store.html', context)
 
 
@@ -411,96 +415,96 @@ def processOrder(request):
 
 # PREGUNTAS FRECUENTES ----------------------------------------------------------------------------------
 def preguntas(request):
-    context={}
-    return render(request,'Otros/faq.html', context)
+	context={}
+	return render(request,'Otros/faq.html', context)
 
 # TERMINOS DE VENTA Y SERVICIO ----------------------------------------------------------------------------------
 def terminos(request):
-    context={}
-    return render(request,'Otros/terminos.html', context)
+	context={}
+	return render(request,'Otros/terminos.html', context)
 
 # LOGIN ----------------------------------------------------------------------------------
 
 def registro(request):
-    data = {
-        'form': CustomUserCreationForm()
-    }
+	data = {
+		'form': CustomUserCreationForm()
+	}
 
-    if request.method == 'POST':
-        formulario = CustomUserCreationForm(data=request.POST)
-        if formulario.is_valid():
-            formulario.save()
+	if request.method == 'POST':
+		formulario = CustomUserCreationForm(data=request.POST)
+		if formulario.is_valid():
+			formulario.save()
 
-            #bitacora(request.user, "Registro de usuario: " + formulario.username)
+			#bitacora(request.user, "Registro de usuario: " + formulario.username)
 
-            user = authenticate(username=formulario.cleaned_data["username"],
-                                password=formulario.cleaned_data["password1"])
-            login(request, user)
-            messages.success(request, "Registro exitoso")
-            return redirect(to="two_factor:setup")
-        data["form"] = formulario
-    return render(request, 'registration/registro.html', data)
+			user = authenticate(username=formulario.cleaned_data["username"],
+								password=formulario.cleaned_data["password1"])
+			login(request, user)
+			messages.success(request, "Registro exitoso")
+			return redirect(to="two_factor:setup")
+		data["form"] = formulario
+	return render(request, 'registration/registro.html', data)
 
 
 # USUARIOS ----------------------------------------------------------------------------------
 @permission_required('is_superuser')
 def listarUsuario(request):
-    usuarios = User.objects.all()
-    data = {
-        'usuarios': usuarios,
-    }
+	usuarios = User.objects.all()
+	data = {
+		'usuarios': usuarios,
+	}
 
-    return render(request, 'CRUDs/usuario/listarUsuario.html', data)
+	return render(request, 'CRUDs/usuario/listarUsuario.html', data)
 
 @permission_required('is_superuser')
 def listarOrdenes(request):
-    ordenes = Order.objects.all()
-    data = {
-        'ordenes': ordenes,
-    }
+	ordenes = Order.objects.all()
+	data = {
+		'ordenes': ordenes,
+	}
 
-    return render(request, 'administrador/listaOrdenes.html', data)
+	return render(request, 'administrador/listaOrdenes.html', data)
 
 @permission_required('is_superuser')
 def listarOrdenesProductos(request,id):
-    ordenes = Order.objects.get(id=id)
-    ordenesItems = ordenes.orderitem_set.all()
-    productos = ordenes.orderitem_set.all().count()
+	ordenes = Order.objects.get(id=id)
+	ordenesItems = ordenes.orderitem_set.all()
+	productos = ordenes.orderitem_set.all().count()
 
-    data = {
-        'ordenes': ordenes,
-        'ordenesItems': ordenesItems,
-        'productos': productos,
+	data = {
+		'ordenes': ordenes,
+		'ordenesItems': ordenesItems,
+		'productos': productos,
 
-    }
+	}
 
-    return render(request, 'administrador/listarOrdenesProductos.html', data)
+	return render(request, 'administrador/listarOrdenesProductos.html', data)
 
 @permission_required('is_superuser')
 def editarUsuario(request, id):
-    usuario = get_object_or_404(User, id=id)
-    data = {
-        'form': CustomUserEditForm(instance=usuario)
-    }
+	usuario = get_object_or_404(User, id=id)
+	data = {
+		'form': CustomUserEditForm(instance=usuario)
+	}
 
-    if request.method == 'POST':
-        formulario = CustomUserEditForm(data=request.POST, instance=usuario)
-        if formulario.is_valid():
-            formulario.save()
+	if request.method == 'POST':
+		formulario = CustomUserEditForm(data=request.POST, instance=usuario)
+		if formulario.is_valid():
+			formulario.save()
 
-            messages.success(request, " Usuario actualizado correctamente")
-            return redirect(to="listarUsuario")
-        data['form'] = formulario
-    return render(request, 'CRUDs/usuario/editarUsuario.html', data)
+			messages.success(request, " Usuario actualizado correctamente")
+			return redirect(to="listarUsuario")
+		data['form'] = formulario
+	return render(request, 'CRUDs/usuario/editarUsuario.html', data)
 
 
 @permission_required('is_superuser')
 def eliminarUsuario(request, id):
-    usuario = get_object_or_404(User, id=id)
+	usuario = get_object_or_404(User, id=id)
 
-    usuario.delete()
-    messages.success(request, " Usuario eliminado correctamente")
-    return redirect(to="listarUsuario")
+	usuario.delete()
+	messages.success(request, " Usuario eliminado correctamente")
+	return redirect(to="listarUsuario")
 
 ## importacion de librerias para modulo de seguimiento
 import folium
@@ -508,46 +512,46 @@ import phonenumbers
 import os
 
 def seguimiento(request):
-    from phonenumbers import geocoder
-    number = "+505 77253153"
+	from phonenumbers import geocoder
+	number = "+505 77253153"
 
-    llave = '30e3f905fb6b4f5dbf4bf759a091fe8c'
-    
-    sanNumber = phonenumbers.parse(number)
-    tulocacion = geocoder.description_for_number(sanNumber,"en")
-    print(tulocacion)
+	llave = '30e3f905fb6b4f5dbf4bf759a091fe8c'
+	
+	sanNumber = phonenumbers.parse(number)
+	tulocacion = geocoder.description_for_number(sanNumber,"en")
+	print(tulocacion)
 
-    ##obteniendo el nombre del proveedor del servicio
-    from phonenumbers import carrier
-    provedorServicio =phonenumbers.parse(number)
-    print(carrier.name_for_number(provedorServicio, "en"))
-    
-    ##generando el mapa 
-    from opencage.geocoder import OpenCageGeocode
-    geocoder = OpenCageGeocode(llave)
-    query = str(tulocacion)
-    resultado = geocoder.geocode(query)
-    lat = resultado[0]['geometry']['lat']
-    lng = resultado[0]['geometry']['lng']
-    mimapa = folium.Map(location=[lat, lng], zoom_start = 9)
-    folium.Marker([lat, lng],popup=tulocacion).add_to((mimapa))
-    ## Guardando nuestro mapa en un archivo html en donde se ubica este archivo
-    mimapa.save("miMapa.html")
-    html = open(os.path.dirname(os.path.realpath(__file__))  + '\miMapa.html', "r")   
-    
-    return HttpResponse(html.read())
+	##obteniendo el nombre del proveedor del servicio
+	from phonenumbers import carrier
+	provedorServicio =phonenumbers.parse(number)
+	print(carrier.name_for_number(provedorServicio, "en"))
+	
+	##generando el mapa 
+	from opencage.geocoder import OpenCageGeocode
+	geocoder = OpenCageGeocode(llave)
+	query = str(tulocacion)
+	resultado = geocoder.geocode(query)
+	lat = resultado[0]['geometry']['lat']
+	lng = resultado[0]['geometry']['lng']
+	mimapa = folium.Map(location=[lat, lng], zoom_start = 9)
+	folium.Marker([lat, lng],popup=tulocacion).add_to((mimapa))
+	## Guardando nuestro mapa en un archivo html en donde se ubica este archivo
+	mimapa.save("miMapa.html")
+	html = open(os.path.dirname(os.path.realpath(__file__))  + '\miMapa.html', "r")   
+	
+	return HttpResponse(html.read())
 
 
 # SEGUIMIENTO DE ENTREGA ( simulado XD ) ------------------------------------------------------------------------
 def tracking(request):
-    context={}
-    return render(request,'Otros/seguimiento.html', context)
+	context={}
+	return render(request,'Otros/seguimiento.html', context)
 
 # DETALLE DE LA INFO E IMAGENES DE CADA PRODUCTO----------------------------------------------------------------------------------
 @permission_required('is_superuser')
 def detalleProducto(request, pk):
-    producto = get_object_or_404(Producto, id = pk)
-    imagenesProducto = ImagenProducto.objects.filter(producto_id = pk)
+	producto = get_object_or_404(Producto, id = pk)
+	imagenesProducto = ImagenProducto.objects.filter(producto_id = pk)
 
-    return render(request,'CRUDs/Producto/detalle.html', {'producto':producto,'imagenesProducto': imagenesProducto})
+	return render(request,'CRUDs/Producto/detalle.html', {'producto':producto,'imagenesProducto': imagenesProducto})
 

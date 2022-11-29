@@ -2,17 +2,22 @@
 {% load static %}
 {% load social_share %}
 {% block content %}
+    <div class="d-flex justify-content-end">
+        <form method="GET">
+            <button class="btn btn-primary" type="submit">Buscar</button>
+            {{filter.form}}
+        </form>
+    </div>&nbsp;
 	<div class="row">
+
 		{% for product in products %}
 		<div class="col-lg-4">
 			<img class="thumbnail" src="{{product.imagen.url}}">
 			<div class="box-element product">
-				<h6><strong>{{product.nombreProd}}</strong></h6>
+				<h5><strong>{{product.nombreProd}}</strong></h5>
+                <h6><strong>{{product.categoria.nombreCat}}</strong></h6>
 				<hr>
-
 				<button data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Agregar</button>
-
-
 
 				<a class="btn btn-primary" href="http://www.facebook.com/sharer.php?u=https://mayalsvstudio.herokuapp.com/"><i class="fa-brands fa-facebook"></i></a>
 				<a class="btn btn-success" href="https://api.whatsapp.com/send?text=https://mayalsvstudio.herokuapp.com/"><i class="fa-brands fa-whatsapp"></i></a>

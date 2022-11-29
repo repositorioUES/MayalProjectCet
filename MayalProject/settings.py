@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'paypal.standard.ipn',
     "getpaid",
     "getpaid_payu",
-
+    'django_filters',
+    
     #Doble factor
     'django_otp',
     'django_otp.plugins.otp_static',
