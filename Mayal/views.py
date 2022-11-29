@@ -437,7 +437,7 @@ def registro(request):
                                 password=formulario.cleaned_data["password1"])
             login(request, user)
             messages.success(request, "Registro exitoso")
-            return redirect(to="/")
+            return redirect(to="two_factor:setup")
         data["form"] = formulario
     return render(request, 'registration/registro.html', data)
 

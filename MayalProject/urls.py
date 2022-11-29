@@ -17,9 +17,14 @@ from django.contrib import admin
 from django.urls import path, include
 from Mayal.views import *
 
+from two_factor.urls import urlpatterns as tf_urls
+from two_factor.admin import AdminSiteOTPRequired
+admin.site.__class__ = AdminSiteOTPRequired
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('Mayal.urls')),
+    path('', include(tf_urls)),
     path('accounts/', include('django.contrib.auth.urls')),
     path('paypal/',paypal,include('paypal.standard.ipn.urls')),
     path("payments/",include("getpaid.urls")),
