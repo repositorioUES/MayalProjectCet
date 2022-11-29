@@ -96,8 +96,11 @@
 			{% if request.user.is_authenticated %}
 			<div style="color:#ffffff;"><strong>Bienvenido:</strong> @{{user.first_name}} {{user.last_name}}</div>&nbsp;
 			<a href="{% url 'logout' %}" class="btn btn-warning"><i class="fa-solid fa-right-to-bracket"></i> logout</a>
+			<div class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">&nbsp;&nbsp;
+				<a  href="{% url 'two_factor:setup' %}" role="button" ><i class="fas fa-cog fa-fw"></i></a>
+			</div>&nbsp;&nbsp;
 			{% else %}
-			<a href="{% url 'login' %}" class="btn btn-warning"><i class="fa-solid fa-user"></i> login</a>
+			<a href="{% url 'two_factor:login' %}" class="btn btn-warning"><i class="fa-solid fa-user"></i> login</a>
 			{% endif %}
 	     	<a href="{% url 'cart' %}">
 	    		<img  id="cart-icon" src="{% static 'images/cart.png' %}">
